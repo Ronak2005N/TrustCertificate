@@ -830,7 +830,10 @@ export async function revokeCertificate(
 
   let tx;
   try {
-    tx = await revokeFn(id);
+    tx = await revokeFn(id, {
+      maxPriorityFeePerGas: ethers.parseUnits("30", "gwei"),
+      maxFeePerGas: ethers.parseUnits("50", "gwei"),
+    });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error("Revoke transaction error:", msg, err);
