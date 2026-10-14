@@ -1,6 +1,14 @@
-import { useState } from "react";
+import { useRef, useState, type RefObject } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, ArrowRight, CheckCircle2, Download, Share2, AlertCircle } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  CheckCircle2,
+  ImageDown,
+  Loader2,
+  Share2,
+  AlertCircle,
+} from "lucide-react";
 import { toast } from "sonner";
 import { DashboardShell } from "@/components/layout/DashboardShell";
 import { PageHeader } from "@/components/common/PageHeader";
@@ -19,7 +27,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ISSUANCE_STAGES, issueCertificate, type IssueInput, type IssuanceError } from "@/lib/certificates";
+import {
+  ISSUANCE_STAGES,
+  issueCertificate,
+  type IssueInput,
+  type IssuanceError,
+} from "@/lib/certificates";
+import { downloadCertificateImage } from "@/lib/image-export";
 import { CERTIFICATE_TYPES, type Certificate, type CertificateType } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -46,6 +60,7 @@ function IssuePage() {
   const [stage, setStage] = useState(-1);
   const [issued, setIssued] = useState<Certificate | null>(null);
   const [issueError, setIssueError] = useState<IssuanceError | null>(null);
+  const previewRef = useRef<HTMLElement>(null);
   const [form, setForm] = useState<IssueInput>({
     recipientName: "",
     recipientEmail: "",
@@ -101,12 +116,16 @@ function IssuePage() {
         <div className="grid gap-6 lg:grid-cols-[1fr_420px]">
           <div className="rounded-2xl border bg-card p-6 shadow-soft">
             {issued ? (
-              <IssuedSummary certificate={issued} onIssueAnother={() => {
-                setIssued(null);
-                setStage(-1);
-                setStep(0);
-                setForm((f) => ({ ...f, recipientName: "", recipientEmail: "", course: "" }));
-              }} />
+              <IssuedSummary
+                certificate={issued}
+                certificateRef={previewRef}
+                onIssueAnother={() => {
+                  setIssued(null);
+                  setStage(-1);
+                  setStep(0);
+                  setForm((f) => ({ ...f, recipientName: "", recipientEmail: "", course: "" }));
+                }}
+              />
             ) : stage >= 0 ? (
               <div className="space-y-5">
                 <h2 className="text-sm font-semibold text-foreground">Anchoring certificate</h2>
@@ -300,11 +319,13 @@ function IssuePage() {
               Live preview
             </p>
             <CertificatePreview
+              ref={previewRef}
               data={{
                 recipientName: form.recipientName,
                 course: form.course,
                 type: form.type,
                 issueDate: form.issueDate,
+                description: form.description,
                 ...(issued ? { id: issued.id, hash: issued.hash } : {}),
               }}
             />
@@ -334,11 +355,28 @@ function Field({
 
 function IssuedSummary({
   certificate,
+  certificateRef,
   onIssueAnother,
 }: {
   certificate: Certificate;
+  certificateRef: RefObject<HTMLElement | null>;
   onIssueAnother: () => void;
 }) {
+  const [downloading, setDownloading] = useState(false);
+
+  async function downloadImage() {
+    if (downloading || !certificateRef.current) return;
+    setDownloading(true);
+    try {
+      await downloadCertificateImage(certificateRef.current, certificate.id);
+      toast.success("Certificate downloaded as PNG");
+    } catch {
+      toast.error("Could not generate the certificate image. Please try again.");
+    } finally {
+      setDownloading(false);
+    }
+  }
+
   return (
     <div className="space-y-5">
       <div className="flex items-center gap-3">
@@ -346,9 +384,7 @@ function IssuedSummary({
           <CheckCircle2 className="size-5" aria-hidden />
         </span>
         <div>
-          <h2 className="text-base font-semibold text-foreground">
-            Certificate anchored on-chain
-          </h2>
+          <h2 className="text-base font-semibold text-foreground">Certificate anchored on-chain</h2>
           <p className="text-sm text-muted-foreground">{certificate.id}</p>
         </div>
       </div>
@@ -362,11 +398,13 @@ function IssuedSummary({
             View certificate
           </Link>
         </Button>
-        <Button
-          variant="outline"
-          onClick={() => toast.info("Prototype: PDF download is simulated")}
-        >
-          <Download className="size-4" /> Download PDF
+        <Button variant="outline" onClick={() => void downloadImage()} disabled={downloading}>
+          {downloading ? (
+            <Loader2 className="size-4 animate-spin" />
+          ) : (
+            <ImageDown className="size-4" />
+          )}
+          {downloading ? "Preparing image…" : "Download Certificate as Image"}
         </Button>
         <Button
           variant="outline"

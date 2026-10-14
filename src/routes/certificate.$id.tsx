@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { Copy, Download, ExternalLink, FileQuestion, Share2 } from "lucide-react";
+import { Copy, ExternalLink, FileQuestion, ImageDown, Loader2, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import { PublicNav } from "@/components/layout/PublicNav";
 import { SiteFooter } from "@/components/layout/SiteFooter";
@@ -11,6 +11,7 @@ import { HashDisplay } from "@/components/common/HashDisplay";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { VerificationTimeline } from "@/components/common/VerificationTimeline";
 import { EmptyState } from "@/components/common/EmptyState";
+import { downloadCertificateImage } from "@/lib/image-export";
 import {
   explorerTx,
   findCertificateById,
@@ -38,8 +39,18 @@ export const Route = createFileRoute("/certificate/$id")({
   }),
   component: CertificateDetail,
   notFoundComponent: CertificateMissing,
-  loader: ({ params }) => {
-    if (!findCertificateById(params.id)) throw notFound();
+  loader: async ({ params }) => {
+    if (findCertificateById(params.id)) return null;
+    // Not in the session store (direct link / fresh load) — confirm the
+    // certificate exists in Supabase before rendering; the component
+    // performs the actual fetch on mount.
+    let remote: Certificate | null = null;
+    try {
+      remote = await fetchCertificateFromSupabase(params.id);
+    } catch {
+      remote = null;
+    }
+    if (!remote) throw notFound();
     return null;
   },
 });
@@ -69,6 +80,8 @@ function CertificateDetail() {
   const { id } = Route.useParams();
   const [cert, setCert] = useState<Certificate | undefined>(() => findCertificateById(id));
   const [loading, setLoading] = useState(!cert);
+  const [downloading, setDownloading] = useState(false);
+  const previewRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     if (!cert) {
@@ -106,6 +119,19 @@ function CertificateDetail() {
 
   const revoked = cert.status === "revoked";
 
+  async function downloadImage() {
+    if (downloading || !cert || !previewRef.current) return;
+    setDownloading(true);
+    try {
+      await downloadCertificateImage(previewRef.current, cert.id);
+      toast.success("Certificate downloaded as PNG");
+    } catch {
+      toast.error("Could not generate the certificate image. Please try again.");
+    } finally {
+      setDownloading(false);
+    }
+  }
+
   const events = [
     { label: "Certificate issued", timestamp: formatDateTime(cert.chain.confirmedAt) },
     { label: "Blockchain confirmed", timestamp: `Block #${cert.chain.block.toLocaleString("en-US")}` },
@@ -128,12 +154,14 @@ function CertificateDetail() {
         <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:px-6 sm:py-14 lg:grid-cols-[1.2fr_1fr]">
           <div className="space-y-6">
             <CertificatePreview
+              ref={previewRef}
               revoked={revoked}
               data={{
                 organization: cert.organization,
                 type: cert.type,
                 recipientName: cert.recipientName,
                 course: cert.course,
+                description: cert.description,
                 issueDate: cert.issueDate,
                 id: cert.id,
                 hash: cert.hash,
@@ -169,6 +197,18 @@ function CertificateDetail() {
             <section className="rounded-2xl border bg-card p-6 shadow-soft">
               <h2 className="text-sm font-semibold text-foreground">Actions</h2>
               <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                <Button
+                  variant="outline"
+                  onClick={() => void downloadImage()}
+                  disabled={downloading}
+                >
+                  {downloading ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    <ImageDown className="size-4" />
+                  )}
+                  {downloading ? "Preparing image…" : "Download image"}
+                </Button>
                 <Button
                   variant="outline"
                   onClick={async () => {
