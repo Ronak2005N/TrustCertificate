@@ -184,8 +184,10 @@ function VerifyPage() {
                 onFile={(f) => void runForensic(f)}
               />
               <p className="mt-3 text-xs text-muted-foreground">
-                Upload the certificate document. Its cryptographic hash will be compared against the
-                on-chain registry.
+                Upload the certificate PDF. Its certificate ID is extracted and the stored metadata
+                is re-hashed with the same SHA-256 fingerprint protocol used at issuance, then
+                compared against the on-chain registry. The file's byte hash is reported separately
+                for integrity reference.
               </p>
             </section>
           </div>

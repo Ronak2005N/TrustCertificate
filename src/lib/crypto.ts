@@ -1,11 +1,10 @@
-export async function computeSHA256(data: ArrayBuffer | Uint8Array | string): Promise<string> {
-  let buffer: ArrayBuffer;
+export async function computeSHA256(
+  data: ArrayBuffer | Uint8Array<ArrayBuffer> | string,
+): Promise<string> {
+  let buffer: BufferSource;
 
   if (typeof data === "string") {
-    const encoder = new TextEncoder();
-    buffer = encoder.encode(data).buffer as ArrayBuffer;
-  } else if (data instanceof Uint8Array) {
-    buffer = data.buffer as ArrayBuffer;
+    buffer = new TextEncoder().encode(data);
   } else {
     buffer = data;
   }

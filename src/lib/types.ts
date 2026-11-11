@@ -67,7 +67,11 @@ export interface ForensicField {
 
 export interface ForensicResult {
   outcome: "match" | "mismatch" | "not_found";
-  documentHash: string;
+  /** SHA-256 of the uploaded file's bytes — file integrity only, NOT the registry key. */
+  documentByteHash: string;
+  /** SHA-256 of the canonical certificate metadata — the fingerprint anchored on-chain. */
+  metadataFingerprint?: string;
+  /** The fingerprint stored on-chain for this certificate. */
   registeredHash?: string;
   fields: ForensicField[];
   certificate?: Certificate;

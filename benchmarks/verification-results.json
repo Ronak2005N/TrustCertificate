@@ -1,0 +1,1004 @@
+{
+  "meta": {
+    "generatedAt": "2026-10-15T17:36:44.832Z",
+    "harness": "scripts/bench-verification.ts",
+    "network": "Polygon Amoy TESTNET (read-only)",
+    "contractAddress": "0x09921D25cB513793e17082Cce0fB4F520f0CDF50",
+    "rpcUrl": "https://polygon-amoy-bor-rpc.publicnode.com",
+    "targetRunsPerMethod": 10,
+    "runsPerMethodExecuted": 10,
+    "methods": {
+      "A": "verifyCertificate(hash) — isHashLike → read-only provider → linear registry scan (getCertificateCount + certificateIds(i) + getCertificate(id) per entry) → on match: getLogs(CertificateRegistered, fromBlock 0) + isAuthorizedIssuer + getBlockNumber → Supabase by-hash metadata → optional fingerprint recompute → checks → outcome",
+      "B": "QR payload \"https://certiproof.app/verify/<hash>\" (CertificatePreview format) → last-path-segment extraction (mirrors /verify_/$hash route param) → verifyCertificate. Camera decoding happens on the phone, outside the app.",
+      "C": "analyzeDocument(file) — SHA-256 file bytes (reference only) → latin1 raw-text regex extraction of CERT-YYYY-NNNNNN + date → fetchCertificateFromChain(id) + fetchCertificateFromSupabase(id) → recompute fingerprint from Supabase metadata vs chain hash + extracted date vs registry date → outcome"
+    },
+    "timingBoundaries": {
+      "verifyCertificate": "START function invoked, END promise resolved. Stages from onStage marks: validate, provider, contract, searchAndDecision (linear scan + match follow-ups + Supabase + decision).",
+      "analyzeDocument": "START function invoked, END promise resolved. Stages: readAndByteHash, extractFields, registrySearch (chain+Supabase), compareAndDecision.",
+      "methodBtotal": "payload build + hash extraction + verifyCertificate (camera scan excluded — outside the application)."
+    },
+    "notes": [
+      "READ-ONLY: no transactions sent, nothing written to chain or Supabase.",
+      "Population discovered live at runtime; runs adapt to available certificates.",
+      "documentByteHash and metadataFingerprint are separate domains and are never compared as equals.",
+      "No PII written to this file: certificate IDs, public hashes and timings only.",
+      "stdDev is the sample standard deviation (n-1). Failed/edge runs are recorded, not discarded.",
+      "Public RPC (publicnode) is shared infrastructure; timings include real network variance."
+    ]
+  },
+  "population": {
+    "onChainTotal": 28,
+    "supabaseRows": 23,
+    "supabaseBacked": 23,
+    "chainOnly": 5,
+    "revokedOnChain": 5,
+    "activeSupabaseBackedUsedForValidRuns": 18
+  },
+  "methodA": {
+    "runs": [
+      {
+        "run": 1,
+        "certificateId": "CERT-2026-567361",
+        "hash": "0xa2ceee030002ad2c437033ed6aa95ae9a8ee3364b24098eac68d8ddd9eb6b6ab",
+        "ok": true,
+        "outcome": "verified",
+        "durationMs": 2707.02,
+        "stagesMs": {
+          "validate": 2.24,
+          "provider": 0.18,
+          "contract": 2.56,
+          "searchAndDecision": 2702.03
+        },
+        "metadataFingerprintCheck": "MATCH",
+        "issuerAuthorization": "AUTHORIZED",
+        "revocationCheck": "ACTIVE",
+        "blockchainRecordPass": false,
+        "confirmationsPass": true,
+        "ipfsDocumentPass": true,
+        "recipientNameEmpty": false,
+        "errorType": null
+      },
+      {
+        "run": 2,
+        "certificateId": "CERT-2026-870033",
+        "hash": "0xb7cb31b27b0b617a9f8c8ab99db8b4d32a3026d7fe6a7f6d247492f07bcbb2ec",
+        "ok": true,
+        "outcome": "verified",
+        "durationMs": 4096.51,
+        "stagesMs": {
+          "validate": 0.11,
+          "provider": 0.11,
+          "contract": 2.41,
+          "searchAndDecision": 4093.88
+        },
+        "metadataFingerprintCheck": "MATCH",
+        "issuerAuthorization": "AUTHORIZED",
+        "revocationCheck": "ACTIVE",
+        "blockchainRecordPass": false,
+        "confirmationsPass": true,
+        "ipfsDocumentPass": true,
+        "recipientNameEmpty": false,
+        "errorType": null
+      },
+      {
+        "run": 3,
+        "certificateId": "CERT-2026-020946",
+        "hash": "0x17d04cd9d68fdd08da753351a8f66b10b0777866177a50ce67b1d1eba06d374e",
+        "ok": true,
+        "outcome": "verified",
+        "durationMs": 5184.67,
+        "stagesMs": {
+          "validate": 0.27,
+          "provider": 0.1,
+          "contract": 2.45,
+          "searchAndDecision": 5181.85
+        },
+        "metadataFingerprintCheck": "MATCH",
+        "issuerAuthorization": "AUTHORIZED",
+        "revocationCheck": "ACTIVE",
+        "blockchainRecordPass": false,
+        "confirmationsPass": true,
+        "ipfsDocumentPass": true,
+        "recipientNameEmpty": false,
+        "errorType": null
+      },
+      {
+        "run": 4,
+        "certificateId": "CERT-2026-515895",
+        "hash": "0xf7cdce44a77a38a034b52a2a4608ee667944a3ba16f8f00d111bdb3d055e3406",
+        "ok": true,
+        "outcome": "verified",
+        "durationMs": 5781.77,
+        "stagesMs": {
+          "validate": 0.09,
+          "provider": 0.07,
+          "contract": 2.29,
+          "searchAndDecision": 5779.32
+        },
+        "metadataFingerprintCheck": "MATCH",
+        "issuerAuthorization": "AUTHORIZED",
+        "revocationCheck": "ACTIVE",
+        "blockchainRecordPass": false,
+        "confirmationsPass": true,
+        "ipfsDocumentPass": true,
+        "recipientNameEmpty": false,
+        "errorType": null
+      },
+      {
+        "run": 5,
+        "certificateId": "CERT-2026-390349",
+        "hash": "0x2a5d468c4db873cb5d6b50d222744781c67e35a824741178b511baee33015cbe",
+        "ok": true,
+        "outcome": "verified",
+        "durationMs": 5938.87,
+        "stagesMs": {
+          "validate": 0.42,
+          "provider": 0.94,
+          "contract": 3.45,
+          "searchAndDecision": 5934.07
+        },
+        "metadataFingerprintCheck": "MATCH",
+        "issuerAuthorization": "AUTHORIZED",
+        "revocationCheck": "ACTIVE",
+        "blockchainRecordPass": false,
+        "confirmationsPass": true,
+        "ipfsDocumentPass": true,
+        "recipientNameEmpty": false,
+        "errorType": null
+      },
+      {
+        "run": 6,
+        "certificateId": "CERT-2026-660700",
+        "hash": "0x2a9151350fcb3627889856d6dbab32e2c19b9b194997cd6cd14c775d0dbd2a1a",
+        "ok": true,
+        "outcome": "verified",
+        "durationMs": 6255.12,
+        "stagesMs": {
+          "validate": 0.11,
+          "provider": 0.17,
+          "contract": 2.94,
+          "searchAndDecision": 6251.9
+        },
+        "metadataFingerprintCheck": "MATCH",
+        "issuerAuthorization": "AUTHORIZED",
+        "revocationCheck": "ACTIVE",
+        "blockchainRecordPass": false,
+        "confirmationsPass": true,
+        "ipfsDocumentPass": true,
+        "recipientNameEmpty": false,
+        "errorType": null
+      },
+      {
+        "run": 7,
+        "certificateId": "CERT-2026-614471",
+        "hash": "0x93d883d7511650275a13fe7d797bfe4dcd10d9be7e518c1848481061bbfd1e35",
+        "ok": true,
+        "outcome": "verified",
+        "durationMs": 7374.2,
+        "stagesMs": {
+          "validate": 0.05,
+          "provider": 0.09,
+          "contract": 1.91,
+          "searchAndDecision": 7372.15
+        },
+        "metadataFingerprintCheck": "MATCH",
+        "issuerAuthorization": "AUTHORIZED",
+        "revocationCheck": "ACTIVE",
+        "blockchainRecordPass": false,
+        "confirmationsPass": true,
+        "ipfsDocumentPass": true,
+        "recipientNameEmpty": false,
+        "errorType": null
+      },
+      {
+        "run": 8,
+        "certificateId": "CERT-2026-164434",
+        "hash": "0xf299eb4379a3e43ca9633623eb6735731e98a250f1be72382a90f35a04940999",
+        "ok": true,
+        "outcome": "verified",
+        "durationMs": 7273.78,
+        "stagesMs": {
+          "validate": 0.3,
+          "provider": 0.16,
+          "contract": 1.7,
+          "searchAndDecision": 7271.62
+        },
+        "metadataFingerprintCheck": "MATCH",
+        "issuerAuthorization": "AUTHORIZED",
+        "revocationCheck": "ACTIVE",
+        "blockchainRecordPass": false,
+        "confirmationsPass": true,
+        "ipfsDocumentPass": true,
+        "recipientNameEmpty": false,
+        "errorType": null
+      },
+      {
+        "run": 9,
+        "certificateId": "CERT-2026-187223",
+        "hash": "0xeeafada949b27df45f5886932744d7a705e130523c2c51077098302d5a4b5fee",
+        "ok": true,
+        "outcome": "verified",
+        "durationMs": 7606.03,
+        "stagesMs": {
+          "validate": 0.22,
+          "provider": 0.1,
+          "contract": 1.21,
+          "searchAndDecision": 7604.51
+        },
+        "metadataFingerprintCheck": "MATCH",
+        "issuerAuthorization": "AUTHORIZED",
+        "revocationCheck": "ACTIVE",
+        "blockchainRecordPass": false,
+        "confirmationsPass": true,
+        "ipfsDocumentPass": true,
+        "recipientNameEmpty": false,
+        "errorType": null
+      },
+      {
+        "run": 10,
+        "certificateId": "CERT-2026-195692",
+        "hash": "0xb2a7f7e02eebfcd5975ebb31510d9e381e816465fcb1d9fe9208eaf71d88f6cf",
+        "ok": true,
+        "outcome": "verified",
+        "durationMs": 8006.71,
+        "stagesMs": {
+          "validate": 0.09,
+          "provider": 0.05,
+          "contract": 1.51,
+          "searchAndDecision": 8005.06
+        },
+        "metadataFingerprintCheck": "MATCH",
+        "issuerAuthorization": "AUTHORIZED",
+        "revocationCheck": "ACTIVE",
+        "blockchainRecordPass": false,
+        "confirmationsPass": true,
+        "ipfsDocumentPass": true,
+        "recipientNameEmpty": false,
+        "errorType": null
+      }
+    ],
+    "stats": {
+      "n": 10,
+      "min": 2707.02,
+      "max": 8006.71,
+      "mean": 6022.47,
+      "median": 6097,
+      "stdDev": 1678.63
+    },
+    "stageStats": {
+      "validate": {
+        "n": 10,
+        "min": 0.05,
+        "max": 2.24,
+        "mean": 0.39,
+        "median": 0.17,
+        "stdDev": 0.66
+      },
+      "provider": {
+        "n": 10,
+        "min": 0.05,
+        "max": 0.94,
+        "mean": 0.2,
+        "median": 0.11,
+        "stdDev": 0.26
+      },
+      "contract": {
+        "n": 10,
+        "min": 1.21,
+        "max": 3.45,
+        "mean": 2.24,
+        "median": 2.35,
+        "stdDev": 0.68
+      },
+      "searchAndDecision": {
+        "n": 10,
+        "min": 2702.03,
+        "max": 8005.06,
+        "mean": 6019.64,
+        "median": 6092.99,
+        "stdDev": 1679.5
+      }
+    }
+  },
+  "methodB": {
+    "runs": [
+      {
+        "run": 1,
+        "certificateId": "CERT-2026-567361",
+        "hash": "0xa2ceee030002ad2c437033ed6aa95ae9a8ee3364b24098eac68d8ddd9eb6b6ab",
+        "payloadBuildMs": 0.16,
+        "extractionMs": 0.18,
+        "extractedHash": "0xa2ceee030002ad2c437033ed6aa95ae9a8ee3364b24098eac68d8ddd9eb6b6ab",
+        "verifyDurationMs": 2722.67,
+        "totalMs": 2723.02,
+        "outcome": "verified",
+        "methodAOutcome": "verified",
+        "consistentWithMethodA": true
+      },
+      {
+        "run": 2,
+        "certificateId": "CERT-2026-870033",
+        "hash": "0xb7cb31b27b0b617a9f8c8ab99db8b4d32a3026d7fe6a7f6d247492f07bcbb2ec",
+        "payloadBuildMs": 4.51,
+        "extractionMs": 0.05,
+        "extractedHash": "0xb7cb31b27b0b617a9f8c8ab99db8b4d32a3026d7fe6a7f6d247492f07bcbb2ec",
+        "verifyDurationMs": 4092.77,
+        "totalMs": 4097.34,
+        "outcome": "verified",
+        "methodAOutcome": "verified",
+        "consistentWithMethodA": true
+      },
+      {
+        "run": 3,
+        "certificateId": "CERT-2026-020946",
+        "hash": "0x17d04cd9d68fdd08da753351a8f66b10b0777866177a50ce67b1d1eba06d374e",
+        "payloadBuildMs": 1.84,
+        "extractionMs": 0.05,
+        "extractedHash": "0x17d04cd9d68fdd08da753351a8f66b10b0777866177a50ce67b1d1eba06d374e",
+        "verifyDurationMs": 5172.77,
+        "totalMs": 5174.66,
+        "outcome": "verified",
+        "methodAOutcome": "verified",
+        "consistentWithMethodA": true
+      },
+      {
+        "run": 4,
+        "certificateId": "CERT-2026-515895",
+        "hash": "0xf7cdce44a77a38a034b52a2a4608ee667944a3ba16f8f00d111bdb3d055e3406",
+        "payloadBuildMs": 3.94,
+        "extractionMs": 0.03,
+        "extractedHash": "0xf7cdce44a77a38a034b52a2a4608ee667944a3ba16f8f00d111bdb3d055e3406",
+        "verifyDurationMs": 5639.27,
+        "totalMs": 5643.24,
+        "outcome": "verified",
+        "methodAOutcome": "verified",
+        "consistentWithMethodA": true
+      },
+      {
+        "run": 5,
+        "certificateId": "CERT-2026-390349",
+        "hash": "0x2a5d468c4db873cb5d6b50d222744781c67e35a824741178b511baee33015cbe",
+        "payloadBuildMs": 0.05,
+        "extractionMs": 0.03,
+        "extractedHash": "0x2a5d468c4db873cb5d6b50d222744781c67e35a824741178b511baee33015cbe",
+        "verifyDurationMs": 5980.11,
+        "totalMs": 5980.19,
+        "outcome": "verified",
+        "methodAOutcome": "verified",
+        "consistentWithMethodA": true
+      },
+      {
+        "run": 6,
+        "certificateId": "CERT-2026-660700",
+        "hash": "0x2a9151350fcb3627889856d6dbab32e2c19b9b194997cd6cd14c775d0dbd2a1a",
+        "payloadBuildMs": 3.85,
+        "extractionMs": 0.05,
+        "extractedHash": "0x2a9151350fcb3627889856d6dbab32e2c19b9b194997cd6cd14c775d0dbd2a1a",
+        "verifyDurationMs": 6141.48,
+        "totalMs": 6145.39,
+        "outcome": "verified",
+        "methodAOutcome": "verified",
+        "consistentWithMethodA": true
+      },
+      {
+        "run": 7,
+        "certificateId": "CERT-2026-614471",
+        "hash": "0x93d883d7511650275a13fe7d797bfe4dcd10d9be7e518c1848481061bbfd1e35",
+        "payloadBuildMs": 0.04,
+        "extractionMs": 0.03,
+        "extractedHash": "0x93d883d7511650275a13fe7d797bfe4dcd10d9be7e518c1848481061bbfd1e35",
+        "verifyDurationMs": 7616.8,
+        "totalMs": 7616.87,
+        "outcome": "verified",
+        "methodAOutcome": "verified",
+        "consistentWithMethodA": true
+      },
+      {
+        "run": 8,
+        "certificateId": "CERT-2026-164434",
+        "hash": "0xf299eb4379a3e43ca9633623eb6735731e98a250f1be72382a90f35a04940999",
+        "payloadBuildMs": 0.02,
+        "extractionMs": 0.05,
+        "extractedHash": "0xf299eb4379a3e43ca9633623eb6735731e98a250f1be72382a90f35a04940999",
+        "verifyDurationMs": 7255.81,
+        "totalMs": 7255.89,
+        "outcome": "verified",
+        "methodAOutcome": "verified",
+        "consistentWithMethodA": true
+      },
+      {
+        "run": 9,
+        "certificateId": "CERT-2026-187223",
+        "hash": "0xeeafada949b27df45f5886932744d7a705e130523c2c51077098302d5a4b5fee",
+        "payloadBuildMs": 0.03,
+        "extractionMs": 0.02,
+        "extractedHash": "0xeeafada949b27df45f5886932744d7a705e130523c2c51077098302d5a4b5fee",
+        "verifyDurationMs": 7770.84,
+        "totalMs": 7770.89,
+        "outcome": "verified",
+        "methodAOutcome": "verified",
+        "consistentWithMethodA": true
+      },
+      {
+        "run": 10,
+        "certificateId": "CERT-2026-195692",
+        "hash": "0xb2a7f7e02eebfcd5975ebb31510d9e381e816465fcb1d9fe9208eaf71d88f6cf",
+        "payloadBuildMs": 3.55,
+        "extractionMs": 0.03,
+        "extractedHash": "0xb2a7f7e02eebfcd5975ebb31510d9e381e816465fcb1d9fe9208eaf71d88f6cf",
+        "verifyDurationMs": 7973.78,
+        "totalMs": 7977.36,
+        "outcome": "verified",
+        "methodAOutcome": "verified",
+        "consistentWithMethodA": true
+      }
+    ],
+    "stats": {
+      "n": 10,
+      "min": 2723.02,
+      "max": 7977.36,
+      "mean": 6038.49,
+      "median": 6062.79,
+      "stdDev": 1713.07
+    },
+    "consistencyVsMethodA": "10/10 (100%)"
+  },
+  "methodC": {
+    "runs": [
+      {
+        "run": 1,
+        "certificateId": "CERT-2026-567361",
+        "fileBytes": 4798,
+        "ok": true,
+        "outcome": "match",
+        "durationMs": 532.8,
+        "stagesMs": {
+          "readAndByteHash": 1.3,
+          "extractFields": 0.2,
+          "registrySearch": 530.78,
+          "compareAndDecision": 0.53
+        },
+        "documentByteHash": "0xc742e4c213bd26170d19f3dc1447ad39d514b006ca92d63e0458836add8e98f3",
+        "metadataFingerprint": "0xa2ceee030002ad2c437033ed6aa95ae9a8ee3364b24098eac68d8ddd9eb6b6ab",
+        "registeredHash": "0xa2ceee030002ad2c437033ed6aa95ae9a8ee3364b24098eac68d8ddd9eb6b6ab",
+        "fingerprintMatchesChain": true,
+        "domainsSeparated": true,
+        "dateFieldMatch": true,
+        "errorType": null
+      },
+      {
+        "run": 2,
+        "certificateId": "CERT-2026-870033",
+        "fileBytes": 4792,
+        "ok": true,
+        "outcome": "match",
+        "durationMs": 524.3,
+        "stagesMs": {
+          "readAndByteHash": 5.23,
+          "extractFields": 0.05,
+          "registrySearch": 518.42,
+          "compareAndDecision": 0.61
+        },
+        "documentByteHash": "0x931b11e49412d764877899935e4ac300ac19f91e6fb4db5b9edde2e801a7f9d8",
+        "metadataFingerprint": "0xb7cb31b27b0b617a9f8c8ab99db8b4d32a3026d7fe6a7f6d247492f07bcbb2ec",
+        "registeredHash": "0xb7cb31b27b0b617a9f8c8ab99db8b4d32a3026d7fe6a7f6d247492f07bcbb2ec",
+        "fingerprintMatchesChain": true,
+        "domainsSeparated": true,
+        "dateFieldMatch": true,
+        "errorType": null
+      },
+      {
+        "run": 3,
+        "certificateId": "CERT-2026-020946",
+        "fileBytes": 4795,
+        "ok": true,
+        "outcome": "match",
+        "durationMs": 538.78,
+        "stagesMs": {
+          "readAndByteHash": 0.41,
+          "extractFields": 0.04,
+          "registrySearch": 538.09,
+          "compareAndDecision": 0.24
+        },
+        "documentByteHash": "0x9dd1e39180f6b655a8d94bb644341cab298d04b44d6d02f5627b05b38931537d",
+        "metadataFingerprint": "0x17d04cd9d68fdd08da753351a8f66b10b0777866177a50ce67b1d1eba06d374e",
+        "registeredHash": "0x17d04cd9d68fdd08da753351a8f66b10b0777866177a50ce67b1d1eba06d374e",
+        "fingerprintMatchesChain": true,
+        "domainsSeparated": true,
+        "dateFieldMatch": true,
+        "errorType": null
+      },
+      {
+        "run": 4,
+        "certificateId": "CERT-2026-515895",
+        "fileBytes": 4803,
+        "ok": true,
+        "outcome": "match",
+        "durationMs": 515.15,
+        "stagesMs": {
+          "readAndByteHash": 0.38,
+          "extractFields": 0.04,
+          "registrySearch": 514.46,
+          "compareAndDecision": 0.28
+        },
+        "documentByteHash": "0x37bcc45eca862af3efac1153a033d07fbce8281d2edd7839365354f1c61bc340",
+        "metadataFingerprint": "0xf7cdce44a77a38a034b52a2a4608ee667944a3ba16f8f00d111bdb3d055e3406",
+        "registeredHash": "0xf7cdce44a77a38a034b52a2a4608ee667944a3ba16f8f00d111bdb3d055e3406",
+        "fingerprintMatchesChain": true,
+        "domainsSeparated": true,
+        "dateFieldMatch": true,
+        "errorType": null
+      },
+      {
+        "run": 5,
+        "certificateId": "CERT-2026-390349",
+        "fileBytes": 4785,
+        "ok": true,
+        "outcome": "match",
+        "durationMs": 558.8,
+        "stagesMs": {
+          "readAndByteHash": 0.16,
+          "extractFields": 0.02,
+          "registrySearch": 558.27,
+          "compareAndDecision": 0.35
+        },
+        "documentByteHash": "0x8701966b81dc99ea7e55b181d35af30ea09954e1dd4fcddbab258d129db4849f",
+        "metadataFingerprint": "0x2a5d468c4db873cb5d6b50d222744781c67e35a824741178b511baee33015cbe",
+        "registeredHash": "0x2a5d468c4db873cb5d6b50d222744781c67e35a824741178b511baee33015cbe",
+        "fingerprintMatchesChain": true,
+        "domainsSeparated": true,
+        "dateFieldMatch": true,
+        "errorType": null
+      },
+      {
+        "run": 6,
+        "certificateId": "CERT-2026-660700",
+        "fileBytes": 4792,
+        "ok": true,
+        "outcome": "match",
+        "durationMs": 529.83,
+        "stagesMs": {
+          "readAndByteHash": 0.25,
+          "extractFields": 0.04,
+          "registrySearch": 529.36,
+          "compareAndDecision": 0.17
+        },
+        "documentByteHash": "0x489ea15da9fd1ccdb4f048a1d9d6fdba3fce8fb1c1cf3ca3128c63ffadc0c3cd",
+        "metadataFingerprint": "0x2a9151350fcb3627889856d6dbab32e2c19b9b194997cd6cd14c775d0dbd2a1a",
+        "registeredHash": "0x2a9151350fcb3627889856d6dbab32e2c19b9b194997cd6cd14c775d0dbd2a1a",
+        "fingerprintMatchesChain": true,
+        "domainsSeparated": true,
+        "dateFieldMatch": true,
+        "errorType": null
+      },
+      {
+        "run": 7,
+        "certificateId": "CERT-2026-614471",
+        "fileBytes": 4786,
+        "ok": true,
+        "outcome": "match",
+        "durationMs": 624.44,
+        "stagesMs": {
+          "readAndByteHash": 0.29,
+          "extractFields": 0.05,
+          "registrySearch": 623.68,
+          "compareAndDecision": 0.42
+        },
+        "documentByteHash": "0x5ec392104eb7e0d7d62447a2ed0a645034db16e7de2cc0adc473fc5c26a61c73",
+        "metadataFingerprint": "0x93d883d7511650275a13fe7d797bfe4dcd10d9be7e518c1848481061bbfd1e35",
+        "registeredHash": "0x93d883d7511650275a13fe7d797bfe4dcd10d9be7e518c1848481061bbfd1e35",
+        "fingerprintMatchesChain": true,
+        "domainsSeparated": true,
+        "dateFieldMatch": true,
+        "errorType": null
+      },
+      {
+        "run": 8,
+        "certificateId": "CERT-2026-164434",
+        "fileBytes": 4810,
+        "ok": true,
+        "outcome": "match",
+        "durationMs": 549.62,
+        "stagesMs": {
+          "readAndByteHash": 4.88,
+          "extractFields": 0.17,
+          "registrySearch": 544.36,
+          "compareAndDecision": 0.21
+        },
+        "documentByteHash": "0x9dc466a4a5a55fdbaa68d6066685994f85e27d094c6c99a47ee884feb0ef3b07",
+        "metadataFingerprint": "0xf299eb4379a3e43ca9633623eb6735731e98a250f1be72382a90f35a04940999",
+        "registeredHash": "0xf299eb4379a3e43ca9633623eb6735731e98a250f1be72382a90f35a04940999",
+        "fingerprintMatchesChain": true,
+        "domainsSeparated": true,
+        "dateFieldMatch": true,
+        "errorType": null
+      },
+      {
+        "run": 9,
+        "certificateId": "CERT-2026-187223",
+        "fileBytes": 4810,
+        "ok": true,
+        "outcome": "match",
+        "durationMs": 551.51,
+        "stagesMs": {
+          "readAndByteHash": 0.24,
+          "extractFields": 0.02,
+          "registrySearch": 551.01,
+          "compareAndDecision": 0.24
+        },
+        "documentByteHash": "0x69d0a5130fc43524203c6a7bbbddae7abb787b6e4a83c159a8227d15093ed803",
+        "metadataFingerprint": "0xeeafada949b27df45f5886932744d7a705e130523c2c51077098302d5a4b5fee",
+        "registeredHash": "0xeeafada949b27df45f5886932744d7a705e130523c2c51077098302d5a4b5fee",
+        "fingerprintMatchesChain": true,
+        "domainsSeparated": true,
+        "dateFieldMatch": true,
+        "errorType": null
+      },
+      {
+        "run": 10,
+        "certificateId": "CERT-2026-195692",
+        "fileBytes": 4810,
+        "ok": true,
+        "outcome": "match",
+        "durationMs": 585.89,
+        "stagesMs": {
+          "readAndByteHash": 0.24,
+          "extractFields": 0.03,
+          "registrySearch": 585.43,
+          "compareAndDecision": 0.19
+        },
+        "documentByteHash": "0x2fd5248a003dac7008a03a89256e4d97bc97f0ca4e269a4dd328910422d9630b",
+        "metadataFingerprint": "0xb2a7f7e02eebfcd5975ebb31510d9e381e816465fcb1d9fe9208eaf71d88f6cf",
+        "registeredHash": "0xb2a7f7e02eebfcd5975ebb31510d9e381e816465fcb1d9fe9208eaf71d88f6cf",
+        "fingerprintMatchesChain": true,
+        "domainsSeparated": true,
+        "dateFieldMatch": true,
+        "errorType": null
+      }
+    ],
+    "stats": {
+      "n": 10,
+      "min": 515.15,
+      "max": 624.44,
+      "mean": 551.11,
+      "median": 544.2,
+      "stdDev": 32.66
+    },
+    "stageStats": {
+      "readAndByteHash": {
+        "n": 10,
+        "min": 0.16,
+        "max": 5.23,
+        "mean": 1.34,
+        "median": 0.34,
+        "stdDev": 1.99
+      },
+      "extractFields": {
+        "n": 10,
+        "min": 0.02,
+        "max": 0.2,
+        "mean": 0.07,
+        "median": 0.04,
+        "stdDev": 0.06
+      },
+      "registrySearch": {
+        "n": 10,
+        "min": 514.46,
+        "max": 623.68,
+        "mean": 549.39,
+        "median": 541.23,
+        "stdDev": 33.3
+      },
+      "compareAndDecision": {
+        "n": 10,
+        "min": 0.17,
+        "max": 0.61,
+        "mean": 0.32,
+        "median": 0.26,
+        "stdDev": 0.15
+      }
+    }
+  },
+  "negatives": {
+    "unknownHash": [
+      {
+        "case": "unknown-hash-0",
+        "input": "0xe3672e9c6171e511c7e5ff329dd07c73650351981343351c87fc171ce2966572",
+        "extractionSucceeded": null,
+        "ok": true,
+        "outcome": "not_found",
+        "errorType": "not_found",
+        "durationMs": 10015.06
+      },
+      {
+        "case": "unknown-hash-1",
+        "input": "0xc5d31af495ed00563ea17c0b4cb9623385f08ae8e9204d83208a047c909f6ac7",
+        "extractionSucceeded": null,
+        "ok": true,
+        "outcome": "not_found",
+        "errorType": "not_found",
+        "durationMs": 10926.37
+      },
+      {
+        "case": "unknown-hash-2",
+        "input": "0xb8feadbf669844b9e8eb10fe6f989d5a321aa59344e387f34b202a51fae41aa2",
+        "extractionSucceeded": null,
+        "ok": true,
+        "outcome": "not_found",
+        "errorType": "not_found",
+        "durationMs": 10308
+      },
+      {
+        "case": "unknown-hash-3",
+        "input": "0xf32dfca2b14b6a6fa2b995b79eb67e0adbd8ef7ffd8c42187ff94715e10bc66f",
+        "extractionSucceeded": null,
+        "ok": true,
+        "outcome": "not_found",
+        "errorType": "not_found",
+        "durationMs": 10259.37
+      },
+      {
+        "case": "unknown-hash-4",
+        "input": "0x29f6038b24250242002ab521cfe9bcfff30cc6ae7c85e88ee6ba74152991ac28",
+        "extractionSucceeded": null,
+        "ok": true,
+        "outcome": "not_found",
+        "errorType": "not_found",
+        "durationMs": 10297.76
+      }
+    ],
+    "malformedHash": [
+      {
+        "case": "malformed-hash-empty",
+        "input": "(empty string)",
+        "extractionSucceeded": null,
+        "ok": true,
+        "outcome": "error",
+        "errorType": "invalid_hash",
+        "durationMs": 0.23
+      },
+      {
+        "case": "malformed-hash-short-0x",
+        "input": "0x123",
+        "extractionSucceeded": null,
+        "ok": true,
+        "outcome": "error",
+        "errorType": "invalid_hash",
+        "durationMs": 0.03
+      },
+      {
+        "case": "malformed-hash-no-prefix",
+        "input": "deadbeefdeadbeefdead…(64 chars)",
+        "extractionSucceeded": null,
+        "ok": true,
+        "outcome": "error",
+        "errorType": "invalid_hash",
+        "durationMs": 0.01
+      },
+      {
+        "case": "malformed-hash-non-hex",
+        "input": "0xzzzzzzzzzzzzzzzzzz…(66 chars)",
+        "extractionSucceeded": null,
+        "ok": true,
+        "outcome": "error",
+        "errorType": "invalid_hash",
+        "durationMs": 0.01
+      }
+    ],
+    "malformedQr": [
+      {
+        "case": "malformed-qr-garbage",
+        "input": "not-a-qr-payload-at-all",
+        "extractionSucceeded": false,
+        "ok": true,
+        "outcome": "malformed_payload_no_hash_extracted",
+        "errorType": null,
+        "durationMs": 0.01
+      },
+      {
+        "case": "malformed-qr-url-no-hash",
+        "input": "https://certiproof.app/verify/",
+        "extractionSucceeded": false,
+        "ok": true,
+        "outcome": "malformed_payload_no_hash_extracted",
+        "errorType": null,
+        "durationMs": 0
+      },
+      {
+        "case": "malformed-qr-url-bad-hash",
+        "input": "https://certiproof.app/verify/0xZZZ",
+        "extractionSucceeded": true,
+        "ok": true,
+        "outcome": "error",
+        "errorType": "invalid_hash",
+        "durationMs": 0
+      },
+      {
+        "case": "malformed-qr-foreign-url",
+        "input": "https://example.com/something",
+        "extractionSucceeded": false,
+        "ok": true,
+        "outcome": "malformed_payload_no_hash_extracted",
+        "errorType": null,
+        "durationMs": 0.01
+      }
+    ],
+    "unknownQr": [
+      {
+        "case": "unknown-qr-hash-0",
+        "input": "https://certiproof.app/verify/<unknown-hash-0>",
+        "extractionSucceeded": true,
+        "ok": true,
+        "outcome": "not_found",
+        "errorType": "not_found",
+        "durationMs": 10231.06
+      },
+      {
+        "case": "unknown-qr-hash-1",
+        "input": "https://certiproof.app/verify/<unknown-hash-1>",
+        "extractionSucceeded": true,
+        "ok": true,
+        "outcome": "not_found",
+        "errorType": "not_found",
+        "durationMs": 10593.01
+      }
+    ],
+    "tamper": [
+      {
+        "case": "tamper-issue-date",
+        "targetField": "issueDate",
+        "replacementFound": true,
+        "occurrenceCount": 1,
+        "baselineOutcome": "match",
+        "tamperedOutcome": "mismatch",
+        "durationMs": 516.45,
+        "detectedBySystem": true
+      },
+      {
+        "case": "tamper-recipient-name",
+        "targetField": "recipientName",
+        "replacementFound": true,
+        "occurrenceCount": 1,
+        "baselineOutcome": "match",
+        "tamperedOutcome": "match",
+        "durationMs": 536.68,
+        "detectedBySystem": false
+      },
+      {
+        "case": "tamper-course",
+        "targetField": "course",
+        "replacementFound": true,
+        "occurrenceCount": 1,
+        "baselineOutcome": "match",
+        "tamperedOutcome": "match",
+        "durationMs": 531.51,
+        "detectedBySystem": false
+      },
+      {
+        "case": "tamper-certificate-id",
+        "targetField": "certificateId",
+        "replacementFound": true,
+        "occurrenceCount": 2,
+        "baselineOutcome": "match",
+        "tamperedOutcome": "not_found",
+        "durationMs": 402.05,
+        "detectedBySystem": true
+      }
+    ],
+    "garbageInputs": [
+      {
+        "case": "text-file-renamed-pdf",
+        "input": "fake.pdf (35 bytes)",
+        "extractionSucceeded": null,
+        "ok": true,
+        "outcome": "not_found",
+        "errorType": null,
+        "durationMs": 0.56
+      },
+      {
+        "case": "png-image",
+        "input": "scan.png (12 bytes)",
+        "extractionSucceeded": null,
+        "ok": true,
+        "outcome": "not_found",
+        "errorType": null,
+        "durationMs": 0.2
+      },
+      {
+        "case": "empty-file",
+        "input": "empty.pdf (0 bytes)",
+        "extractionSucceeded": null,
+        "ok": true,
+        "outcome": "not_found",
+        "errorType": null,
+        "durationMs": 0.08
+      }
+    ]
+  },
+  "chainOnly": {
+    "target": {
+      "id": "CERT-2026-361028",
+      "idFormat": "numeric"
+    },
+    "methodA": {
+      "run": 1,
+      "certificateId": "CERT-2026-361028",
+      "hash": "0x5ca940ea3e77bbc27c7811ac435cb9c965d15fd00436122337f821b453c2fc9b",
+      "ok": true,
+      "outcome": "verified",
+      "durationMs": 1617.05,
+      "stagesMs": {
+        "validate": 0.11,
+        "provider": 0.04,
+        "contract": 0.94,
+        "searchAndDecision": 1615.96
+      },
+      "metadataFingerprintCheck": "absent",
+      "issuerAuthorization": "AUTHORIZED",
+      "revocationCheck": "ACTIVE",
+      "blockchainRecordPass": false,
+      "confirmationsPass": true,
+      "ipfsDocumentPass": true,
+      "recipientNameEmpty": true,
+      "errorType": null
+    },
+    "methodC": {
+      "certificateId": "CERT-2026-361028",
+      "outcome": "not_found",
+      "metadataUnavailableIndicated": true,
+      "durationMs": 532.64
+    }
+  },
+  "revoked": {
+    "performed": true,
+    "methodA": {
+      "outcome": "revoked",
+      "revocationCheck": "REVOKED",
+      "durationMs": 3364.66
+    },
+    "methodB": {
+      "outcome": "revoked",
+      "durationMs": 3260.29
+    },
+    "methodC": {
+      "outcome": "match",
+      "certificateStatus": "revoked",
+      "durationMs": 594.85
+    }
+  },
+  "fingerprintConsistency": {
+    "checked": 23,
+    "allThreeEqual": 23,
+    "recomputedEqOnChain": 23,
+    "supabaseEqOnChain": 23,
+    "mismatches": []
+  },
+  "security": {
+    "staticScanFiles": [
+      "src/lib/certificates.ts",
+      "src/lib/certificate-fingerprint.ts",
+      "src/lib/crypto.ts",
+      "src/lib/supabase.ts",
+      "src/lib/blockchain/metamask.ts",
+      "src/lib/blockchain/contracts.ts"
+    ],
+    "patternsScanned": [
+      "PINATA_JWT",
+      "DEPLOYER_PRIVATE_KEY",
+      "service_role",
+      "pinata.cloud",
+      "PRIVATE_KEY"
+    ],
+    "findings": []
+  },
+  "reliability": {
+    "methodAValidVerified": "10/10 (100%)",
+    "methodBConsistentWithA": "10/10 (100%)",
+    "methodCValidMatch": "10/10 (100%)",
+    "unknownHashDetectedNotFound": "5/5 (100%)",
+    "malformedHashRejected": "4/4 (100%)",
+    "tamperDetected": "2/4 (50%)",
+    "fingerprintConsistencyAllThree": "23/23 (100%)",
+    "note": "Each rate states its exact numerator/denominator; denominators are the executed test cases recorded in this file."
+  }
+}

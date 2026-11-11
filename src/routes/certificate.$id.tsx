@@ -15,7 +15,7 @@ import { downloadCertificateImage } from "@/lib/image-export";
 import {
   explorerTx,
   findCertificateById,
-  fetchCertificateFromSupabase,
+  fetchVerifiedCertificateFromSupabase,
   formatDate,
   formatDateTime,
 } from "@/lib/certificates";
@@ -42,11 +42,13 @@ export const Route = createFileRoute("/certificate/$id")({
   loader: async ({ params }) => {
     if (findCertificateById(params.id)) return null;
     // Not in the session store (direct link / fresh load) — confirm the
-    // certificate exists in Supabase before rendering; the component
-    // performs the actual fetch on mount.
+    // certificate exists BOTH in Supabase and on-chain (with a matching
+    // certificate_hash) before rendering; a metadata-only Supabase row never
+    // renders as a verified certificate. The component performs the actual
+    // fetch on mount.
     let remote: Certificate | null = null;
     try {
-      remote = await fetchCertificateFromSupabase(params.id);
+      remote = await fetchVerifiedCertificateFromSupabase(params.id);
     } catch {
       remote = null;
     }
@@ -86,7 +88,10 @@ function CertificateDetail() {
   useEffect(() => {
     if (!cert) {
       let cancelled = false;
-      fetchCertificateFromSupabase(id).then((c) => {
+      // Chain-cross-checked fetch: the on-chain record is authoritative for
+      // hash/status; Supabase supplies display metadata only when its
+      // fingerprint matches the on-chain hash.
+      fetchVerifiedCertificateFromSupabase(id).then((c) => {
         if (!cancelled) {
           if (c) {
             setCert(c);

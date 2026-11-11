@@ -49,3 +49,4 @@ context_md/
 
 # OS files
 Thumbs.db
+.gstack/

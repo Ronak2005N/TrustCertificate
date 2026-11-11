@@ -29,6 +29,8 @@ import {
 } from "@/components/ui/select";
 import {
   ISSUANCE_STAGES,
+  checkPendingTransaction,
+  explorerTx,
   issueCertificate,
   type IssueInput,
   type IssuanceError,
@@ -60,6 +62,7 @@ function IssuePage() {
   const [stage, setStage] = useState(-1);
   const [issued, setIssued] = useState<Certificate | null>(null);
   const [issueError, setIssueError] = useState<IssuanceError | null>(null);
+  const [checkingStatus, setCheckingStatus] = useState(false);
   const previewRef = useRef<HTMLElement>(null);
   const [form, setForm] = useState<IssueInput>({
     recipientName: "",
@@ -93,6 +96,33 @@ function IssuePage() {
       setIssueError(issuanceErr);
       setStage(-1);
       toast.error(issuanceErr.message);
+    }
+  }
+
+  // One-shot re-check of a submitted-but-unconfirmed transaction (no polling).
+  async function checkTransactionStatus() {
+    if (issueError?.type !== "confirmation_pending") return;
+    setCheckingStatus(true);
+    try {
+      const result = await checkPendingTransaction(issueError.transactionHash);
+      if (result.state === "confirmed" && result.certificate) {
+        setIssueError(null);
+        setStage(ISSUANCE_STAGES.length);
+        setIssued(result.certificate);
+        toast.success("Transaction confirmed — certificate anchored on-chain");
+      } else if (result.state === "confirmed") {
+        setIssueError(null);
+        toast.success("Transaction confirmed on-chain. Refresh the dashboard to view it.");
+      } else if (result.state === "failed") {
+        setIssueError(null);
+        toast.error("Transaction was mined but reverted — no certificate was registered.");
+      } else {
+        toast.info("Transaction is still pending on Polygon Amoy. Try again shortly.");
+      }
+    } catch {
+      toast.error("Could not check the transaction status. Please try again.");
+    } finally {
+      setCheckingStatus(false);
     }
   }
 
@@ -133,14 +163,44 @@ function IssuePage() {
               </div>
             ) : issueError ? (
               <div className="space-y-5">
-                <div className="rounded-xl border border-destructive/25 bg-destructive/5 p-5">
+                <div
+                  className={cn(
+                    "rounded-xl border p-5",
+                    issueError.type === "confirmation_pending"
+                      ? "border-warning/25 bg-warning-muted/50"
+                      : "border-destructive/25 bg-destructive/5",
+                  )}
+                >
                   <div className="flex items-start gap-3">
-                    <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-destructive-muted text-destructive">
+                    <span
+                      className={cn(
+                        "flex size-8 shrink-0 items-center justify-center rounded-lg",
+                        issueError.type === "confirmation_pending"
+                          ? "bg-warning-muted text-warning"
+                          : "bg-destructive-muted text-destructive",
+                      )}
+                    >
                       <AlertCircle className="size-4" />
                     </span>
                     <div className="space-y-1">
-                      <p className="text-sm font-semibold text-foreground">Certificate issuance failed</p>
+                      <p className="text-sm font-semibold text-foreground">
+                        {issueError.type === "confirmation_pending"
+                          ? "Transaction pending confirmation"
+                          : "Certificate issuance failed"}
+                      </p>
                       <p className="text-sm text-muted-foreground">{issueError.message}</p>
+                      {(issueError.type === "confirmation_pending" ||
+                        issueError.type === "transaction_failed") &&
+                        issueError.transactionHash && (
+                          <a
+                            href={explorerTx(issueError.transactionHash)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-block text-xs text-primary hover:underline"
+                          >
+                            View transaction on PolygonScan →
+                          </a>
+                        )}
                       {issueError.type === "insufficient_funds" && (
                         <p className="text-xs text-muted-foreground">
                           Get test POL from{" "}
@@ -157,9 +217,26 @@ function IssuePage() {
                     </div>
                   </div>
                 </div>
-                <Button variant="outline" onClick={() => setIssueError(null)}>
-                  Try again
-                </Button>
+                <div className="flex flex-wrap gap-2">
+                  {issueError.type === "confirmation_pending" && (
+                    <Button
+                      variant="outline"
+                      onClick={() => void checkTransactionStatus()}
+                      disabled={checkingStatus}
+                    >
+                      {checkingStatus ? (
+                        <>
+                          <Loader2 className="size-4 animate-spin" /> Checking status…
+                        </>
+                      ) : (
+                        "Check confirmation status"
+                      )}
+                    </Button>
+                  )}
+                  <Button variant="outline" onClick={() => setIssueError(null)}>
+                    Try again
+                  </Button>
+                </div>
               </div>
             ) : (
               <>

@@ -9,6 +9,7 @@
  */
 import { ethers } from "ethers";
 import { generateCertificatePDF } from "../src/lib/pdf/generate-certificate";
+import { canonicalizeCertificateMetadata } from "../src/lib/certificate-fingerprint";
 
 const RPC = "https://polygon-amoy-bor-rpc.publicnode.com"; // same RPC the app uses
 const LOG_RPC = "https://polygon-amoy.gateway.tenderly.co"; // allows full-range eth_getLogs (publicnode/drpc free cap at 10k blocks)
@@ -232,7 +233,13 @@ async function main() {
     course: "B.Tech Computer Science and Engineering",
     date: "2026-05-18",
   };
-  const canon = (c: typeof base) => `${c.id}|${c.name}|${c.course}|${c.date}`;
+  const canon = (c: typeof base) =>
+    canonicalizeCertificateMetadata({
+      certificateId: c.id,
+      recipientName: c.name,
+      course: c.course,
+      issueDate: c.date,
+    });
   const baseHash = await sha256hex(canon(base));
   log(`base fingerprint : 0x${baseHash}`);
   const mutations: [string, typeof base][] = [
@@ -287,10 +294,14 @@ async function main() {
 
   // --------------------------------------- forensic consistency check
   log("");
-  log("=== 8. PDF FORENSIC CONSISTENCY (documents the known hashing inconsistency) ===");
-  log(`metadata fingerprint (issuance/on-chain domain) : 0x${baseHash}`);
-  log(`same-certificate PDF byte hash (forensic domain): 0x${pdfSampleHash || "(pdf failed)"}`);
-  log(`match: ${pdfSampleHash === baseHash ? "YES" : "NO"}  => forensic comparison of PDF bytes against the registered fingerprint ${pdfSampleHash === baseHash ? "matches" : "cannot match"} by construction`);
+  log("=== 8. DOCUMENT BYTE HASH vs METADATA FINGERPRINT (separate domains by design) ===");
+  log(`metadata fingerprint (issuance/on-chain registry key): 0x${baseHash}`);
+  log(
+    `same-certificate PDF byte hash (file integrity only) : 0x${pdfSampleHash || "(pdf failed)"}`,
+  );
+  log(
+    `equal: ${pdfSampleHash === baseHash ? "YES" : "NO"}  => the two hashes cover different inputs by design; the PDF byte hash is reported separately and is never used as the registry key`,
+  );
 
   log("");
   log("--- IPFS document retrieval check (public gateway GET, read-only) ---");

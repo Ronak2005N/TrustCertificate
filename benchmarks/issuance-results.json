@@ -1,0 +1,118 @@
+{
+  "meta": {
+    "generatedAt": "2026-10-16T08:11:24.156Z",
+    "harness": "scripts/bench-issuance.ts",
+    "network": "Polygon Amoy (TESTNET)",
+    "chainId": 80002,
+    "contractAddress": "0x09921D25cB513793e17082Cce0fB4F520f0CDF50",
+    "issuerAddress": "0x3e72b748a543DEc762a297F7304A04F980d7bC01",
+    "runsRequested": 1,
+    "runsSucceeded": 1,
+    "runsFailed": 0,
+    "timingBoundaries": {
+      "totalIssuanceMs": "START: issueCertificate() invoked. END: issueCertificate() returns the Certificate. Excludes the fire-and-forget Supabase insert (measured separately as supabasePersistenceMs).",
+      "fingerprintGenerationMs": "generateCertificateFingerprint() — canonical metadata SHA-256.",
+      "pdfGenerationMs": "generateCertificateBlob() — jsPDF document generation.",
+      "ipfsUploadMs": "uploadToIPFS() — real server-function chain in-process: FormData validation + Pinata pin + CID return (browser→server HTTP RPC hop absent).",
+      "blockchainPreparationMs": "getSigner() + getContract(signer) — wallet/signer and contract wiring.",
+      "blockchainSubmissionMs": "registerCertificate(...) call until the transaction response/hash is returned (includes ethers' propagation poll until the node can serve the transaction).",
+      "blockchainConfirmationMs": "waitForTransactionConfirmation() — tx.wait() raced against the application's 60s confirmation timeout, with one final receipt check on timeout. Resolves only from a real mined receipt; a timeout with no receipt is recorded as a FAILED run (category confirmation_pending) — never as success.",
+      "supabasePersistenceMs": "saveCertificateToSupabase() insert; fire-and-forget in the real app, awaited only by the harness."
+    },
+    "notes": [
+      "All runs are REAL Polygon Amoy testnet transactions paid in test POL. No mainnet activity.",
+      "Signer: DEPLOYER_PRIVATE_KEY through an EIP-1193 shim (no MetaMask popup). Private key never logged or stored.",
+      "QR generation is render-time (CertificatePreview) and not part of issuance; measured once as a separate microbenchmark.",
+      "stdDev is the sample standard deviation (n-1)."
+    ]
+  },
+  "runs": [
+    {
+      "run": 1,
+      "ok": true,
+      "certificateId": "CERT-2026-273168",
+      "fingerprintGenerationMs": 1.74,
+      "pdfGenerationMs": 33.55,
+      "ipfsUploadMs": 2117.72,
+      "blockchainPreparationMs": 38.5,
+      "blockchainSubmissionMs": 1897.7,
+      "blockchainConfirmationMs": 5232.65,
+      "supabasePersistenceMs": 1468.89,
+      "qrGenerationMs": null,
+      "totalIssuanceMs": 9328,
+      "transactionHash": "0x823d7bc4bc50e18e4a43ea857f09ce0ab9c06f24fa1b4b9644be8a655788a703",
+      "cid": "QmVgzPmUdtTue47jgzwR1G3WogXuH9fgguoEgzRthmqoSu"
+    }
+  ],
+  "failures": [],
+  "microbenchmarks": {
+    "qrGenerationMs": 136.43,
+    "note": "Single run of QRCode.toDataURL (same options as CertificatePreview). Not part of the issuance pipeline."
+  },
+  "stats": {
+    "fingerprintGenerationMs": {
+      "n": 1,
+      "min": 1.74,
+      "max": 1.74,
+      "mean": 1.74,
+      "median": 1.74,
+      "stdDev": 0
+    },
+    "pdfGenerationMs": {
+      "n": 1,
+      "min": 33.55,
+      "max": 33.55,
+      "mean": 33.55,
+      "median": 33.55,
+      "stdDev": 0
+    },
+    "ipfsUploadMs": {
+      "n": 1,
+      "min": 2117.72,
+      "max": 2117.72,
+      "mean": 2117.72,
+      "median": 2117.72,
+      "stdDev": 0
+    },
+    "blockchainPreparationMs": {
+      "n": 1,
+      "min": 38.5,
+      "max": 38.5,
+      "mean": 38.5,
+      "median": 38.5,
+      "stdDev": 0
+    },
+    "blockchainSubmissionMs": {
+      "n": 1,
+      "min": 1897.7,
+      "max": 1897.7,
+      "mean": 1897.7,
+      "median": 1897.7,
+      "stdDev": 0
+    },
+    "blockchainConfirmationMs": {
+      "n": 1,
+      "min": 5232.65,
+      "max": 5232.65,
+      "mean": 5232.65,
+      "median": 5232.65,
+      "stdDev": 0
+    },
+    "supabasePersistenceMs": {
+      "n": 1,
+      "min": 1468.89,
+      "max": 1468.89,
+      "mean": 1468.89,
+      "median": 1468.89,
+      "stdDev": 0
+    },
+    "totalIssuanceMs": {
+      "n": 1,
+      "min": 9328,
+      "max": 9328,
+      "mean": 9328,
+      "median": 9328,
+      "stdDev": 0
+    }
+  }
+}

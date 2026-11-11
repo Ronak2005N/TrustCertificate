@@ -9,6 +9,10 @@
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
+    "test": "bun test",
+    "bench:issuance": "bun scripts/bench-issuance.ts",
+    "bench:ipfs": "bun scripts/bench-ipfs.ts",
+    "bench:verification": "bun scripts/bench-verification.ts",
     "format": "prettier --write ."
   },
   "dependencies": {

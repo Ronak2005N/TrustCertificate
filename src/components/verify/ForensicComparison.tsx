@@ -14,24 +14,26 @@ export function ForensicComparison({
   result: ForensicResult;
   className?: string;
 }) {
-  const mismatch = result.outcome !== "match";
+  const mismatch = result.outcome === "mismatch";
+  const notFound = result.outcome === "not_found";
+  const problem = mismatch || notFound;
 
   return (
     <div className={cn("space-y-5", className)}>
       <div
         className={cn(
           "glass-panel flex flex-col gap-3 rounded-2xl p-5 sm:flex-row sm:items-center sm:justify-between",
-          mismatch ? "border-destructive/25" : "border-success/25",
+          problem ? "border-destructive/25" : "border-success/25",
         )}
       >
         <div className="flex items-center gap-3">
           <span
             className={cn(
               "flex size-10 items-center justify-center rounded-xl",
-              mismatch ? "bg-destructive-muted text-destructive" : "bg-success-muted text-success",
+              problem ? "bg-destructive-muted text-destructive" : "bg-success-muted text-success",
             )}
           >
-            {mismatch ? (
+            {problem ? (
               <AlertTriangle className="size-5" aria-hidden />
             ) : (
               <CheckCircle2 className="size-5" aria-hidden />
@@ -39,16 +41,22 @@ export function ForensicComparison({
           </span>
           <div>
             <p className="text-sm font-semibold text-foreground">
-              {mismatch ? "Potential tampering detected." : "Document matches the registry."}
+              {notFound
+                ? "Certificate not found in the registry."
+                : mismatch
+                  ? "Potential tampering detected."
+                  : "Document matches the registry."}
             </p>
             <p className="text-xs text-muted-foreground">
-              {mismatch
-                ? "One or more extracted fields differ from the on-chain certificate record."
-                : "Every extracted field matches the record anchored on Polygon Amoy."}
+              {notFound
+                ? "The certificate ID could not be located on Polygon Amoy or its stored metadata is unavailable."
+                : mismatch
+                  ? "The recomputed metadata fingerprint or an extracted field differs from the record anchored on-chain."
+                  : "The metadata re-hashed from this document produces the exact fingerprint anchored on Polygon Amoy."}
             </p>
           </div>
         </div>
-        <StatusBadge status={mismatch ? "Mismatch" : "Match"} />
+        <StatusBadge status={mismatch ? "Mismatch" : notFound ? "Not found" : "Match"} />
       </div>
 
       <div className="grid gap-5 md:grid-cols-2">
@@ -56,14 +64,14 @@ export function ForensicComparison({
           title="Document"
           subtitle="Extracted from the uploaded file"
           rows={result.fields.map((f) => [f.label, f.document, f.match] as const)}
-          hashLabel="Document hash"
-          hash={result.documentHash}
+          hashLabel="Document byte hash (SHA-256 of file bytes)"
+          hash={result.documentByteHash}
         />
         <Column
           title="Blockchain"
           subtitle="Registered in CertChainRegistry"
           rows={result.fields.map((f) => [f.label, f.registry, true] as const)}
-          hashLabel="Registered hash"
+          hashLabel="Certificate fingerprint (on-chain)"
           hash={result.registeredHash ?? "—"}
         />
       </div>

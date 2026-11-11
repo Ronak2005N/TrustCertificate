@@ -35,6 +35,8 @@ function BulkIssuePage() {
   const [processed, setProcessed] = useState(0);
   const [running, setRunning] = useState(false);
   const [done, setDone] = useState(false);
+  const [stopped, setStopped] = useState(false);
+  const [failedRow, setFailedRow] = useState<{ index: number; pending: boolean } | null>(null);
 
   const valid = rows.filter((r) => r.valid);
   const invalid = rows.length - valid.length;
@@ -45,25 +47,47 @@ function BulkIssuePage() {
     setFileName(name);
     setProcessed(0);
     setDone(false);
+    setStopped(false);
+    setFailedRow(null);
     if (parsed.length === 0) toast.error("No rows found in that CSV");
   }
 
   async function run() {
     setRunning(true);
+    setStopped(false);
+    setFailedRow(null);
+    let issued = 0;
+    let stoppedEarly = false;
     for (const [i, row] of valid.entries()) {
-      await issueCertificate({
-        recipientName: row.name,
-        recipientEmail: row.email,
-        course: row.course,
-        type: row.type as CertificateType,
-        issueDate: row.date,
-      });
-      setProcessed(i + 1);
+      try {
+        await issueCertificate({
+          recipientName: row.name,
+          recipientEmail: row.email,
+          course: row.course,
+          type: row.type as CertificateType,
+          issueDate: row.date,
+        });
+        issued += 1;
+        setProcessed(issued);
+      } catch (err) {
+        // An error here includes a submitted-but-unconfirmed transaction
+        // (confirmation_pending): stop the batch instead of reporting success.
+        const issuanceErr = err as { type?: string; message?: string };
+        stoppedEarly = true;
+        setStopped(true);
+        setFailedRow({ index: i, pending: issuanceErr.type === "confirmation_pending" });
+        toast.error(`Row ${i + 1} (${row.name}): ${issuanceErr.message ?? "Issuance failed"}`);
+        break;
+      }
       await wait(120);
     }
     setRunning(false);
     setDone(true);
-    toast.success(`${valid.length} certificates issued on-chain`);
+    if (!stoppedEarly) {
+      toast.success(`${issued} certificates issued on-chain`);
+    } else {
+      toast.warning(`Batch stopped: ${issued} of ${valid.length} certificates confirmed`);
+    }
   }
 
   const percent = valid.length ? Math.round((processed / valid.length) * 100) : 0;
@@ -141,6 +165,9 @@ function BulkIssuePage() {
                     setRows([]);
                     setFileName(null);
                     setDone(false);
+                    setStopped(false);
+                    setFailedRow(null);
+                    setProcessed(0);
                   }}
                 >
                   Replace file
@@ -156,7 +183,11 @@ function BulkIssuePage() {
               <div className="rounded-2xl border bg-card p-5 shadow-soft">
                 <div className="mb-2 flex items-center justify-between text-sm">
                   <span className="font-medium text-foreground">
-                    {done ? "Batch complete" : "Anchoring certificates"}
+                    {done
+                      ? stopped
+                        ? "Batch stopped"
+                        : "Batch complete"
+                      : "Anchoring certificates"}
                   </span>
                   <span className="font-mono text-xs text-muted-foreground">
                     {processed}/{valid.length}
@@ -194,7 +225,10 @@ function BulkIssuePage() {
                 </thead>
                 <tbody>
                   {rows.map((row, i) => {
-                    const issuedRow = row.valid && i < processed;
+                    const validIndex = valid.indexOf(row);
+                    const issuedRow = row.valid && validIndex >= 0 && validIndex < processed;
+                    const failedHere =
+                      row.valid && failedRow !== null && failedRow.index === validIndex;
                     return (
                       <tr
                         key={`${row.email}-${i}`}
@@ -218,6 +252,16 @@ function BulkIssuePage() {
                             <span className="inline-flex items-center gap-1.5 text-xs font-medium text-success">
                               <CheckCircle2 className="size-3.5" aria-hidden /> Issued
                             </span>
+                          ) : failedHere ? (
+                            failedRow?.pending ? (
+                              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-warning">
+                                <AlertTriangle className="size-3.5" aria-hidden /> Pending
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-destructive">
+                                <AlertTriangle className="size-3.5" aria-hidden /> Failed
+                              </span>
+                            )
                           ) : (
                             <span className="text-xs text-muted-foreground">Ready</span>
                           )}

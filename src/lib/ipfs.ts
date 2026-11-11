@@ -1,83 +1,27 @@
-const env = import.meta.env as Record<string, string | undefined>;
-const PINATA_JWT = env["VITE_PINATA_JWT"];
-const PINATA_UPLOAD_URL = "https://api.pinata.cloud/pinning/pinFileToIPFS";
+import { createServerFn } from "@tanstack/react-start";
 
 export interface IPFSUploadResult {
   cid: string;
   url: string;
 }
 
+export type UploadFnResult =
+  { ok: true; cid: string; url: string } | { ok: false; message: string };
+
+const uploadCertificateFileFn = createServerFn({ method: "POST" })
+  .validator((data: FormData): FormData => data)
+  .handler(async ({ data }) => {
+    const { uploadCertificateFile } = await import("./server/pinata");
+    return uploadCertificateFile(data);
+  });
+
 export async function uploadToIPFS(file: File): Promise<IPFSUploadResult> {
-  if (!PINATA_JWT) {
-    throw new Error("Pinata JWT not configured. Add VITE_PINATA_JWT to .env");
+  const form = new FormData();
+  form.append("file", file, file.name);
+
+  const result = await uploadCertificateFileFn({ data: form });
+  if (!result.ok) {
+    throw new Error(result.message);
   }
-
-  const formData = new FormData();
-  formData.append("file", file);
-
-  const metadata = JSON.stringify({
-    name: file.name,
-    keyvalues: {
-      type: "certificate",
-    },
-  });
-  formData.append("pinataMetadata", metadata);
-
-  const response = await fetch(PINATA_UPLOAD_URL, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${PINATA_JWT}`,
-    },
-    body: formData,
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || "Failed to upload to IPFS");
-  }
-
-  const result = await response.json();
-
-  return {
-    cid: result.IpfsHash,
-    url: `https://gateway.pinata.cloud/ipfs/${result.IpfsHash}`,
-  };
-}
-
-export async function uploadJSONToIPFS(
-  data: Record<string, unknown>,
-  name: string
-): Promise<IPFSUploadResult> {
-  if (!PINATA_JWT) {
-    throw new Error("Pinata JWT not configured");
-  }
-
-  const body = {
-    pinataContent: data,
-    pinataMetadata: { name },
-  };
-
-  const response = await fetch(
-    "https://api.pinata.cloud/pinning/pinJSONToIPFS",
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${PINATA_JWT}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    }
-  );
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || "Failed to upload JSON to IPFS");
-  }
-
-  const result = await response.json();
-
-  return {
-    cid: result.IpfsHash,
-    url: `https://gateway.pinata.cloud/ipfs/${result.IpfsHash}`,
-  };
+  return { cid: result.cid, url: result.url };
 }

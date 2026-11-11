@@ -227,7 +227,7 @@ export async function analyzeDocument(
   if (tampered) {
     return {
       outcome: "mismatch",
-      documentHash: mockHash(fileName),
+      documentByteHash: mockHash(fileName),
       registeredHash: cert.hash,
       certificate: cert,
       fields: [
@@ -247,7 +247,7 @@ export async function analyzeDocument(
 
   return {
     outcome: "match",
-    documentHash: cert.hash,
+    documentByteHash: cert.hash,
     registeredHash: cert.hash,
     certificate: cert,
     fields: [

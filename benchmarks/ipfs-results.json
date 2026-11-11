@@ -1,0 +1,1295 @@
+{
+  "meta": {
+    "generatedAt": "2026-10-15T16:18:02.772Z",
+    "harness": "scripts/bench-ipfs.ts",
+    "runsPerSize": 5,
+    "sizes": [
+      {
+        "label": "10KB",
+        "bytes": 10240
+      },
+      {
+        "label": "100KB",
+        "bytes": 102400
+      },
+      {
+        "label": "500KB",
+        "bytes": 512000
+      },
+      {
+        "label": "1MB",
+        "bytes": 1048576
+      },
+      {
+        "label": "2MB",
+        "bytes": 2097152
+      },
+      {
+        "label": "5MB",
+        "bytes": 5242880
+      },
+      {
+        "label": "10MB",
+        "bytes": 10485760
+      }
+    ],
+    "totalRealUploadCycles": 36,
+    "retrievalAttemptsPerCycle": 3,
+    "gateway": "https://gateway.pinata.cloud/ipfs",
+    "scopeRationale": "Full scope (7 sizes × N runs) chosen because Pinata unpin cleanup (DELETE /pinning/unpin/{cid}) was verified available (HTTP 200) with the server-side credential before the benchmark; every harness pin is unpinned afterwards.",
+    "timingBoundaries": {
+      "uploadMs": "START: uploadToIPFS(file) invoked via the in-process server-function chain (same convention as bench-issuance ipfsUploadMs — only the browser→server HTTP RPC hop is absent). END: CID + gateway URL returned by the server handler.",
+      "retrievalMs": "START: gateway GET of the app-returned URL issued. END: full body read of a non-empty 2xx response. The first successful attempt's duration is used; failed attempts are recorded per run."
+    },
+    "integrityProtocol": "SHA-256(original uploaded bytes) must equal SHA-256(retrieved bytes). HTTP 200 alone is never treated as success; the body must be non-empty and byte-identical.",
+    "domainSeparation": "documentByteHash (file-byte integrity, measured here) is intentionally separate from metadataFingerprint (certificate registry identity, TASK 1). They are never compared to each other.",
+    "contentGeneration": "Size-sweep files use deterministic mulberry32-seeded synthetic bytes, unique per size+run, so every upload is genuinely new content. No PII is used anywhere.",
+    "secrets": "PINATA_JWT is read only from the server-side environment and is never printed or written to this file.",
+    "notes": [
+      "All uploads are REAL Pinata pins through the application's own server-side upload path.",
+      "All retrievals are REAL gateway GETs of the returned CID.",
+      "stdDev is the sample standard deviation (n-1).",
+      "Failed runs are recorded honestly and excluded from timing stats (they remain in the raw cycles list and reliability denominators)."
+    ]
+  },
+  "cycles": [
+    {
+      "phase": "certificate-pdf",
+      "label": "certificate-pdf",
+      "run": 1,
+      "ok": true,
+      "fileBytes": 4795,
+      "uploadMs": 2041.45,
+      "cid": "Qmd4d8MXoZmZ4dyX2HiHVZRdh292UPEeDAdhyTiH55y7D5",
+      "url": "https://gateway.pinata.cloud/ipfs/Qmd4d8MXoZmZ4dyX2HiHVZRdh292UPEeDAdhyTiH55y7D5",
+      "originalSha256": "3f638479b3e477d1333361b5f8b4ff9f1a93ba852f93ef5425299cde6e69df38",
+      "retrievalAttempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "httpStatus": 200,
+          "durationMs": 6091.88,
+          "error": null
+        }
+      ],
+      "firstAttemptRetrievalOk": true,
+      "retrievalOk": true,
+      "retrievalMs": 6091.88,
+      "retrievedSha256": "3f638479b3e477d1333361b5f8b4ff9f1a93ba852f93ef5425299cde6e69df38",
+      "integrityOk": true,
+      "unpinOk": null,
+      "error": null
+    },
+    {
+      "phase": "size-sweep",
+      "label": "10KB",
+      "run": 1,
+      "ok": true,
+      "fileBytes": 10240,
+      "uploadMs": 1070.15,
+      "cid": "QmT9igppHbAGRavw5gFUfH8sdbDiyi7k4Jeh2HCzWzMqCt",
+      "url": "https://gateway.pinata.cloud/ipfs/QmT9igppHbAGRavw5gFUfH8sdbDiyi7k4Jeh2HCzWzMqCt",
+      "originalSha256": "08006ca5e22f9b9700d16a983bb092b74f3bf286dbb96d612d10cb75b6728370",
+      "retrievalAttempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "httpStatus": 200,
+          "durationMs": 8002,
+          "error": null
+        }
+      ],
+      "firstAttemptRetrievalOk": true,
+      "retrievalOk": true,
+      "retrievalMs": 8002,
+      "retrievedSha256": "08006ca5e22f9b9700d16a983bb092b74f3bf286dbb96d612d10cb75b6728370",
+      "integrityOk": true,
+      "unpinOk": true,
+      "error": null
+    },
+    {
+      "phase": "size-sweep",
+      "label": "10KB",
+      "run": 2,
+      "ok": true,
+      "fileBytes": 10240,
+      "uploadMs": 1259.23,
+      "cid": "QmbdPNeuCugCKHHaLUZfx1kDfzx6GVkUQShzXMhnok7kqd",
+      "url": "https://gateway.pinata.cloud/ipfs/QmbdPNeuCugCKHHaLUZfx1kDfzx6GVkUQShzXMhnok7kqd",
+      "originalSha256": "17e38d3ea54b4ec82e1e4dc2328c5dbdf36d412bbc33ddd84f373eb7df85af92",
+      "retrievalAttempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "httpStatus": 200,
+          "durationMs": 7035.29,
+          "error": null
+        }
+      ],
+      "firstAttemptRetrievalOk": true,
+      "retrievalOk": true,
+      "retrievalMs": 7035.29,
+      "retrievedSha256": "17e38d3ea54b4ec82e1e4dc2328c5dbdf36d412bbc33ddd84f373eb7df85af92",
+      "integrityOk": true,
+      "unpinOk": true,
+      "error": null
+    },
+    {
+      "phase": "size-sweep",
+      "label": "10KB",
+      "run": 3,
+      "ok": true,
+      "fileBytes": 10240,
+      "uploadMs": 1162.64,
+      "cid": "QmeFZcvgz3UfPLvi6pE9cHjpN6XxCw2NyjnjLrCKCGX5hF",
+      "url": "https://gateway.pinata.cloud/ipfs/QmeFZcvgz3UfPLvi6pE9cHjpN6XxCw2NyjnjLrCKCGX5hF",
+      "originalSha256": "5050620e42f9ab9af2d55bf5e771775b61383b7cfc865d924999d4388984b391",
+      "retrievalAttempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "httpStatus": 200,
+          "durationMs": 5083.48,
+          "error": null
+        }
+      ],
+      "firstAttemptRetrievalOk": true,
+      "retrievalOk": true,
+      "retrievalMs": 5083.48,
+      "retrievedSha256": "5050620e42f9ab9af2d55bf5e771775b61383b7cfc865d924999d4388984b391",
+      "integrityOk": true,
+      "unpinOk": true,
+      "error": null
+    },
+    {
+      "phase": "size-sweep",
+      "label": "10KB",
+      "run": 4,
+      "ok": true,
+      "fileBytes": 10240,
+      "uploadMs": 1100.25,
+      "cid": "QmZMWbFWqnQeowNVTRwEwBwFaU4vqQfL9NktmEiXLtQUVJ",
+      "url": "https://gateway.pinata.cloud/ipfs/QmZMWbFWqnQeowNVTRwEwBwFaU4vqQfL9NktmEiXLtQUVJ",
+      "originalSha256": "131575500f18a79c3d67524d22745ab6c6b258298321b8113142131a49442dd3",
+      "retrievalAttempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "httpStatus": 200,
+          "durationMs": 7938.55,
+          "error": null
+        }
+      ],
+      "firstAttemptRetrievalOk": true,
+      "retrievalOk": true,
+      "retrievalMs": 7938.55,
+      "retrievedSha256": "131575500f18a79c3d67524d22745ab6c6b258298321b8113142131a49442dd3",
+      "integrityOk": true,
+      "unpinOk": true,
+      "error": null
+    },
+    {
+      "phase": "size-sweep",
+      "label": "10KB",
+      "run": 5,
+      "ok": true,
+      "fileBytes": 10240,
+      "uploadMs": 1178.45,
+      "cid": "Qmc2bAngga15EubYoqUcf62D6mbvVJdugGxyX3SuyEab2Q",
+      "url": "https://gateway.pinata.cloud/ipfs/Qmc2bAngga15EubYoqUcf62D6mbvVJdugGxyX3SuyEab2Q",
+      "originalSha256": "6ae255fa0897919ba1847b34b0a40ff12b62778eeb9169d76cc1d3194ee360bc",
+      "retrievalAttempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "httpStatus": 200,
+          "durationMs": 4932.24,
+          "error": null
+        }
+      ],
+      "firstAttemptRetrievalOk": true,
+      "retrievalOk": true,
+      "retrievalMs": 4932.24,
+      "retrievedSha256": "6ae255fa0897919ba1847b34b0a40ff12b62778eeb9169d76cc1d3194ee360bc",
+      "integrityOk": true,
+      "unpinOk": true,
+      "error": null
+    },
+    {
+      "phase": "size-sweep",
+      "label": "100KB",
+      "run": 1,
+      "ok": true,
+      "fileBytes": 102400,
+      "uploadMs": 1305.61,
+      "cid": "QmX5UQa3cy6axxiNmBSLX98Sn79BQapun6YGeYbPuBQqv7",
+      "url": "https://gateway.pinata.cloud/ipfs/QmX5UQa3cy6axxiNmBSLX98Sn79BQapun6YGeYbPuBQqv7",
+      "originalSha256": "b399b71afc4e43a51d388fc757de63d122b44c6001cd2d15cb7b00070af96eff",
+      "retrievalAttempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "httpStatus": 200,
+          "durationMs": 4713.61,
+          "error": null
+        }
+      ],
+      "firstAttemptRetrievalOk": true,
+      "retrievalOk": true,
+      "retrievalMs": 4713.61,
+      "retrievedSha256": "b399b71afc4e43a51d388fc757de63d122b44c6001cd2d15cb7b00070af96eff",
+      "integrityOk": true,
+      "unpinOk": true,
+      "error": null
+    },
+    {
+      "phase": "size-sweep",
+      "label": "100KB",
+      "run": 2,
+      "ok": true,
+      "fileBytes": 102400,
+      "uploadMs": 1970.55,
+      "cid": "QmXuzxcxEdZ8s8aEj3SMgggDJyc8UBBWGHwGCE28xrCpEe",
+      "url": "https://gateway.pinata.cloud/ipfs/QmXuzxcxEdZ8s8aEj3SMgggDJyc8UBBWGHwGCE28xrCpEe",
+      "originalSha256": "fb6643528be39aabd3aacc8bc6a7ef28df21c4b1d417a9cbfd9629d551add9e0",
+      "retrievalAttempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "httpStatus": 200,
+          "durationMs": 4917.61,
+          "error": null
+        }
+      ],
+      "firstAttemptRetrievalOk": true,
+      "retrievalOk": true,
+      "retrievalMs": 4917.61,
+      "retrievedSha256": "fb6643528be39aabd3aacc8bc6a7ef28df21c4b1d417a9cbfd9629d551add9e0",
+      "integrityOk": true,
+      "unpinOk": true,
+      "error": null
+    },
+    {
+      "phase": "size-sweep",
+      "label": "100KB",
+      "run": 3,
+      "ok": true,
+      "fileBytes": 102400,
+      "uploadMs": 1335.6,
+      "cid": "QmYTCZ7e3KzsQ1djZ3o6aHh9ihTBdhmzE3tN1adXkpCPmP",
+      "url": "https://gateway.pinata.cloud/ipfs/QmYTCZ7e3KzsQ1djZ3o6aHh9ihTBdhmzE3tN1adXkpCPmP",
+      "originalSha256": "8f02ab1f89ee21424878c3afefbbefbb0fa4365bf454b0a4b0068d865fa0b28b",
+      "retrievalAttempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "httpStatus": 200,
+          "durationMs": 5936.02,
+          "error": null
+        }
+      ],
+      "firstAttemptRetrievalOk": true,
+      "retrievalOk": true,
+      "retrievalMs": 5936.02,
+      "retrievedSha256": "8f02ab1f89ee21424878c3afefbbefbb0fa4365bf454b0a4b0068d865fa0b28b",
+      "integrityOk": true,
+      "unpinOk": true,
+      "error": null
+    },
+    {
+      "phase": "size-sweep",
+      "label": "100KB",
+      "run": 4,
+      "ok": true,
+      "fileBytes": 102400,
+      "uploadMs": 1229.62,
+      "cid": "QmSo48Z4V7m2WsnfZgMEodiyjSucRUenAECMexTjZZ25NG",
+      "url": "https://gateway.pinata.cloud/ipfs/QmSo48Z4V7m2WsnfZgMEodiyjSucRUenAECMexTjZZ25NG",
+      "originalSha256": "9058951aa761d70df9f967f611860942ffeae6e11d7c282cd6b71a4e44d17923",
+      "retrievalAttempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "httpStatus": 200,
+          "durationMs": 6865.4,
+          "error": null
+        }
+      ],
+      "firstAttemptRetrievalOk": true,
+      "retrievalOk": true,
+      "retrievalMs": 6865.4,
+      "retrievedSha256": "9058951aa761d70df9f967f611860942ffeae6e11d7c282cd6b71a4e44d17923",
+      "integrityOk": true,
+      "unpinOk": true,
+      "error": null
+    },
+    {
+      "phase": "size-sweep",
+      "label": "100KB",
+      "run": 5,
+      "ok": true,
+      "fileBytes": 102400,
+      "uploadMs": 1161.19,
+      "cid": "QmcjEdzyYeiLNtBDnB9eUA1nn64wPFEXaf5t2L4jmt3Zz1",
+      "url": "https://gateway.pinata.cloud/ipfs/QmcjEdzyYeiLNtBDnB9eUA1nn64wPFEXaf5t2L4jmt3Zz1",
+      "originalSha256": "fc5f858448b593d5034d296cd85da4a87306c3edc3e40012253314156daab02d",
+      "retrievalAttempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "httpStatus": 200,
+          "durationMs": 4796.63,
+          "error": null
+        }
+      ],
+      "firstAttemptRetrievalOk": true,
+      "retrievalOk": true,
+      "retrievalMs": 4796.63,
+      "retrievedSha256": "fc5f858448b593d5034d296cd85da4a87306c3edc3e40012253314156daab02d",
+      "integrityOk": true,
+      "unpinOk": true,
+      "error": null
+    },
+    {
+      "phase": "size-sweep",
+      "label": "500KB",
+      "run": 1,
+      "ok": true,
+      "fileBytes": 512000,
+      "uploadMs": 2124.59,
+      "cid": "QmdEzPHYQbx1mwk9Z6v8Z9RvCv4XngRZGgtczjqh4QoALL",
+      "url": "https://gateway.pinata.cloud/ipfs/QmdEzPHYQbx1mwk9Z6v8Z9RvCv4XngRZGgtczjqh4QoALL",
+      "originalSha256": "0cfdb5b6410903504a7d7feab17ef49f860088d9dd980ef073823e39b5c9624a",
+      "retrievalAttempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "httpStatus": 200,
+          "durationMs": 6360.82,
+          "error": null
+        }
+      ],
+      "firstAttemptRetrievalOk": true,
+      "retrievalOk": true,
+      "retrievalMs": 6360.82,
+      "retrievedSha256": "0cfdb5b6410903504a7d7feab17ef49f860088d9dd980ef073823e39b5c9624a",
+      "integrityOk": true,
+      "unpinOk": true,
+      "error": null
+    },
+    {
+      "phase": "size-sweep",
+      "label": "500KB",
+      "run": 2,
+      "ok": true,
+      "fileBytes": 512000,
+      "uploadMs": 2347.09,
+      "cid": "QmSnrDCPq6JgV1YtyHzudPcqH5njpWxHm5GD5BktARE1yA",
+      "url": "https://gateway.pinata.cloud/ipfs/QmSnrDCPq6JgV1YtyHzudPcqH5njpWxHm5GD5BktARE1yA",
+      "originalSha256": "f9bb762ae127f12f18d5fdd714a1c11eb031fc2a47d02801c35c3fe4762fd2e7",
+      "retrievalAttempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "httpStatus": 200,
+          "durationMs": 7615.1,
+          "error": null
+        }
+      ],
+      "firstAttemptRetrievalOk": true,
+      "retrievalOk": true,
+      "retrievalMs": 7615.1,
+      "retrievedSha256": "f9bb762ae127f12f18d5fdd714a1c11eb031fc2a47d02801c35c3fe4762fd2e7",
+      "integrityOk": true,
+      "unpinOk": true,
+      "error": null
+    },
+    {
+      "phase": "size-sweep",
+      "label": "500KB",
+      "run": 3,
+      "ok": true,
+      "fileBytes": 512000,
+      "uploadMs": 2234.25,
+      "cid": "QmPXUuPqKdKDGS1LFL6XL4DKvwJhpQps2D9P7MRzw2G3Va",
+      "url": "https://gateway.pinata.cloud/ipfs/QmPXUuPqKdKDGS1LFL6XL4DKvwJhpQps2D9P7MRzw2G3Va",
+      "originalSha256": "69c999e678d44a2b7811787b9995fcd25b9ca9d8a6593308115b480b06734a1d",
+      "retrievalAttempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "httpStatus": 200,
+          "durationMs": 7301.05,
+          "error": null
+        }
+      ],
+      "firstAttemptRetrievalOk": true,
+      "retrievalOk": true,
+      "retrievalMs": 7301.05,
+      "retrievedSha256": "69c999e678d44a2b7811787b9995fcd25b9ca9d8a6593308115b480b06734a1d",
+      "integrityOk": true,
+      "unpinOk": true,
+      "error": null
+    },
+    {
+      "phase": "size-sweep",
+      "label": "500KB",
+      "run": 4,
+      "ok": true,
+      "fileBytes": 512000,
+      "uploadMs": 3216.72,
+      "cid": "QmZuP2U56xQ8PuFtrsQi2QeU9yeeG8pXyJQJ2ALCJSwefQ",
+      "url": "https://gateway.pinata.cloud/ipfs/QmZuP2U56xQ8PuFtrsQi2QeU9yeeG8pXyJQJ2ALCJSwefQ",
+      "originalSha256": "9215eca8a9d6d529365801edd3d5db1a53c0a26c6c8c9a8a5b8e7166d81b23cb",
+      "retrievalAttempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "httpStatus": 200,
+          "durationMs": 5188.63,
+          "error": null
+        }
+      ],
+      "firstAttemptRetrievalOk": true,
+      "retrievalOk": true,
+      "retrievalMs": 5188.63,
+      "retrievedSha256": "9215eca8a9d6d529365801edd3d5db1a53c0a26c6c8c9a8a5b8e7166d81b23cb",
+      "integrityOk": true,
+      "unpinOk": true,
+      "error": null
+    },
+    {
+      "phase": "size-sweep",
+      "label": "500KB",
+      "run": 5,
+      "ok": true,
+      "fileBytes": 512000,
+      "uploadMs": 2777.83,
+      "cid": "QmVGxvoDZbLuHuxpBK4dzF8TfmucP7jJM5CMtSBgPPKvuo",
+      "url": "https://gateway.pinata.cloud/ipfs/QmVGxvoDZbLuHuxpBK4dzF8TfmucP7jJM5CMtSBgPPKvuo",
+      "originalSha256": "ea6e0d6f651d8b5c99fdb6a4e8aed673922b857b7e4346d93b5d962fe19d43d7",
+      "retrievalAttempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "httpStatus": 200,
+          "durationMs": 4593.96,
+          "error": null
+        }
+      ],
+      "firstAttemptRetrievalOk": true,
+      "retrievalOk": true,
+      "retrievalMs": 4593.96,
+      "retrievedSha256": "ea6e0d6f651d8b5c99fdb6a4e8aed673922b857b7e4346d93b5d962fe19d43d7",
+      "integrityOk": true,
+      "unpinOk": true,
+      "error": null
+    },
+    {
+      "phase": "size-sweep",
+      "label": "1MB",
+      "run": 1,
+      "ok": true,
+      "fileBytes": 1048576,
+      "uploadMs": 4147.48,
+      "cid": "QmP2woePoEWtHG8giKtScM9MG9ChjzuFLgeiZSWJioGtun",
+      "url": "https://gateway.pinata.cloud/ipfs/QmP2woePoEWtHG8giKtScM9MG9ChjzuFLgeiZSWJioGtun",
+      "originalSha256": "d0056284f3ccf62e21d084dc31b51f903df9428c046eebfa25b64c09e52c8e49",
+      "retrievalAttempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "httpStatus": 200,
+          "durationMs": 8160.41,
+          "error": null
+        }
+      ],
+      "firstAttemptRetrievalOk": true,
+      "retrievalOk": true,
+      "retrievalMs": 8160.41,
+      "retrievedSha256": "d0056284f3ccf62e21d084dc31b51f903df9428c046eebfa25b64c09e52c8e49",
+      "integrityOk": true,
+      "unpinOk": true,
+      "error": null
+    },
+    {
+      "phase": "size-sweep",
+      "label": "1MB",
+      "run": 2,
+      "ok": true,
+      "fileBytes": 1048576,
+      "uploadMs": 3614.96,
+      "cid": "QmVFiQWbkEyBFnkVrMpiLfeRtFtQKmySUmfGFJaiErefY8",
+      "url": "https://gateway.pinata.cloud/ipfs/QmVFiQWbkEyBFnkVrMpiLfeRtFtQKmySUmfGFJaiErefY8",
+      "originalSha256": "dea56768b81d2ef303c58a19e3491b2bf304d739dab6249b95833bf55b287460",
+      "retrievalAttempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "httpStatus": 200,
+          "durationMs": 8858.69,
+          "error": null
+        }
+      ],
+      "firstAttemptRetrievalOk": true,
+      "retrievalOk": true,
+      "retrievalMs": 8858.69,
+      "retrievedSha256": "dea56768b81d2ef303c58a19e3491b2bf304d739dab6249b95833bf55b287460",
+      "integrityOk": true,
+      "unpinOk": true,
+      "error": null
+    },
+    {
+      "phase": "size-sweep",
+      "label": "1MB",
+      "run": 3,
+      "ok": true,
+      "fileBytes": 1048576,
+      "uploadMs": 3048.52,
+      "cid": "QmfH8KfvuFwEQG8QC4SvuV88No58bTX4HqVMwNcqSBmD1Q",
+      "url": "https://gateway.pinata.cloud/ipfs/QmfH8KfvuFwEQG8QC4SvuV88No58bTX4HqVMwNcqSBmD1Q",
+      "originalSha256": "9d3675630cffd8976891c94daddeb4863b2b72e798d4477adfeed4764e9a507a",
+      "retrievalAttempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "httpStatus": 200,
+          "durationMs": 6810.77,
+          "error": null
+        }
+      ],
+      "firstAttemptRetrievalOk": true,
+      "retrievalOk": true,
+      "retrievalMs": 6810.77,
+      "retrievedSha256": "9d3675630cffd8976891c94daddeb4863b2b72e798d4477adfeed4764e9a507a",
+      "integrityOk": true,
+      "unpinOk": true,
+      "error": null
+    },
+    {
+      "phase": "size-sweep",
+      "label": "1MB",
+      "run": 4,
+      "ok": true,
+      "fileBytes": 1048576,
+      "uploadMs": 5214.04,
+      "cid": "Qma2LPwGCPYWpBTS7v9GypJXzJFH8HzM1yAP5SgG1RwR4c",
+      "url": "https://gateway.pinata.cloud/ipfs/Qma2LPwGCPYWpBTS7v9GypJXzJFH8HzM1yAP5SgG1RwR4c",
+      "originalSha256": "c48ba4804132bfa04ba96f03b10a89946633a86b4bf2e07d98fe49e39dc26b18",
+      "retrievalAttempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "httpStatus": 200,
+          "durationMs": 5674.64,
+          "error": null
+        }
+      ],
+      "firstAttemptRetrievalOk": true,
+      "retrievalOk": true,
+      "retrievalMs": 5674.64,
+      "retrievedSha256": "c48ba4804132bfa04ba96f03b10a89946633a86b4bf2e07d98fe49e39dc26b18",
+      "integrityOk": true,
+      "unpinOk": true,
+      "error": null
+    },
+    {
+      "phase": "size-sweep",
+      "label": "1MB",
+      "run": 5,
+      "ok": true,
+      "fileBytes": 1048576,
+      "uploadMs": 4505.11,
+      "cid": "QmZEqSyoQhz3JQnUR3UxvV4NQ9yXtidXFeqmdbm2yEsjUC",
+      "url": "https://gateway.pinata.cloud/ipfs/QmZEqSyoQhz3JQnUR3UxvV4NQ9yXtidXFeqmdbm2yEsjUC",
+      "originalSha256": "b2273cd1edd597f1996358827a5a2ddb212b897680d9376094b439624ff3afb4",
+      "retrievalAttempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "httpStatus": 200,
+          "durationMs": 6030.16,
+          "error": null
+        }
+      ],
+      "firstAttemptRetrievalOk": true,
+      "retrievalOk": true,
+      "retrievalMs": 6030.16,
+      "retrievedSha256": "b2273cd1edd597f1996358827a5a2ddb212b897680d9376094b439624ff3afb4",
+      "integrityOk": true,
+      "unpinOk": true,
+      "error": null
+    },
+    {
+      "phase": "size-sweep",
+      "label": "2MB",
+      "run": 1,
+      "ok": true,
+      "fileBytes": 2097152,
+      "uploadMs": 9208.48,
+      "cid": "QmabPXLksrBfQeSCL74sZsTACUQWzaLjXUV2zHfDRSHHjx",
+      "url": "https://gateway.pinata.cloud/ipfs/QmabPXLksrBfQeSCL74sZsTACUQWzaLjXUV2zHfDRSHHjx",
+      "originalSha256": "1d53c9432b2f51320c777506512a2f557fcce2fcc9097df8b7928b3044a018a1",
+      "retrievalAttempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "httpStatus": 200,
+          "durationMs": 7618.9,
+          "error": null
+        }
+      ],
+      "firstAttemptRetrievalOk": true,
+      "retrievalOk": true,
+      "retrievalMs": 7618.9,
+      "retrievedSha256": "1d53c9432b2f51320c777506512a2f557fcce2fcc9097df8b7928b3044a018a1",
+      "integrityOk": true,
+      "unpinOk": true,
+      "error": null
+    },
+    {
+      "phase": "size-sweep",
+      "label": "2MB",
+      "run": 2,
+      "ok": true,
+      "fileBytes": 2097152,
+      "uploadMs": 7303.86,
+      "cid": "QmfCFJFLYZGJVYAwtVen6iNEbrEnwtCKfd3JFCeJdkZzFH",
+      "url": "https://gateway.pinata.cloud/ipfs/QmfCFJFLYZGJVYAwtVen6iNEbrEnwtCKfd3JFCeJdkZzFH",
+      "originalSha256": "8aab962219c683c4d3587b779391fe19d684051b967d5b8fbff14e071bf8754f",
+      "retrievalAttempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "httpStatus": 200,
+          "durationMs": 9544.57,
+          "error": null
+        }
+      ],
+      "firstAttemptRetrievalOk": true,
+      "retrievalOk": true,
+      "retrievalMs": 9544.57,
+      "retrievedSha256": "8aab962219c683c4d3587b779391fe19d684051b967d5b8fbff14e071bf8754f",
+      "integrityOk": true,
+      "unpinOk": true,
+      "error": null
+    },
+    {
+      "phase": "size-sweep",
+      "label": "2MB",
+      "run": 3,
+      "ok": true,
+      "fileBytes": 2097152,
+      "uploadMs": 6908.47,
+      "cid": "QmbDRYiAwVyRZdegSnCSU9Vk67muckuYHAhxZyJTrTygbJ",
+      "url": "https://gateway.pinata.cloud/ipfs/QmbDRYiAwVyRZdegSnCSU9Vk67muckuYHAhxZyJTrTygbJ",
+      "originalSha256": "bdde5291aa0953458f97a7ec7e8532cfb4a6c1d65fcde8d79568c5a320c479c0",
+      "retrievalAttempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "httpStatus": 200,
+          "durationMs": 8306.94,
+          "error": null
+        }
+      ],
+      "firstAttemptRetrievalOk": true,
+      "retrievalOk": true,
+      "retrievalMs": 8306.94,
+      "retrievedSha256": "bdde5291aa0953458f97a7ec7e8532cfb4a6c1d65fcde8d79568c5a320c479c0",
+      "integrityOk": true,
+      "unpinOk": true,
+      "error": null
+    },
+    {
+      "phase": "size-sweep",
+      "label": "2MB",
+      "run": 4,
+      "ok": true,
+      "fileBytes": 2097152,
+      "uploadMs": 8347.86,
+      "cid": "QmcEYW5ApABfWxALLbvb529vqW8wTTgatQNgqi3edL4Uht",
+      "url": "https://gateway.pinata.cloud/ipfs/QmcEYW5ApABfWxALLbvb529vqW8wTTgatQNgqi3edL4Uht",
+      "originalSha256": "45e8a31d386556536f8f2f02a18256d942dda4802c4a5402bd6d0b546dc43c0b",
+      "retrievalAttempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "httpStatus": 200,
+          "durationMs": 7858.92,
+          "error": null
+        }
+      ],
+      "firstAttemptRetrievalOk": true,
+      "retrievalOk": true,
+      "retrievalMs": 7858.92,
+      "retrievedSha256": "45e8a31d386556536f8f2f02a18256d942dda4802c4a5402bd6d0b546dc43c0b",
+      "integrityOk": true,
+      "unpinOk": true,
+      "error": null
+    },
+    {
+      "phase": "size-sweep",
+      "label": "2MB",
+      "run": 5,
+      "ok": true,
+      "fileBytes": 2097152,
+      "uploadMs": 5816.96,
+      "cid": "QmYWcpz4szZu95NHo5cmDNCW4Moixc1wsRzBX6AxnSbLr8",
+      "url": "https://gateway.pinata.cloud/ipfs/QmYWcpz4szZu95NHo5cmDNCW4Moixc1wsRzBX6AxnSbLr8",
+      "originalSha256": "22b34634494d18808a5c68767b543e15de5f6564b7657bf9b67d5b2fc7ffe86e",
+      "retrievalAttempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "httpStatus": 200,
+          "durationMs": 8445.45,
+          "error": null
+        }
+      ],
+      "firstAttemptRetrievalOk": true,
+      "retrievalOk": true,
+      "retrievalMs": 8445.45,
+      "retrievedSha256": "22b34634494d18808a5c68767b543e15de5f6564b7657bf9b67d5b2fc7ffe86e",
+      "integrityOk": true,
+      "unpinOk": true,
+      "error": null
+    },
+    {
+      "phase": "size-sweep",
+      "label": "5MB",
+      "run": 1,
+      "ok": true,
+      "fileBytes": 5242880,
+      "uploadMs": 15512.75,
+      "cid": "Qmd65Qoujh9g3dvTYCvBJPKs56THgDfYzHVANzLijfMZT2",
+      "url": "https://gateway.pinata.cloud/ipfs/Qmd65Qoujh9g3dvTYCvBJPKs56THgDfYzHVANzLijfMZT2",
+      "originalSha256": "1afdaa3ffb4878374191b67416bc167a51ed02d9ba36a0047fa115f256c484a9",
+      "retrievalAttempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "httpStatus": 200,
+          "durationMs": 6272.89,
+          "error": null
+        }
+      ],
+      "firstAttemptRetrievalOk": true,
+      "retrievalOk": true,
+      "retrievalMs": 6272.89,
+      "retrievedSha256": "1afdaa3ffb4878374191b67416bc167a51ed02d9ba36a0047fa115f256c484a9",
+      "integrityOk": true,
+      "unpinOk": true,
+      "error": null
+    },
+    {
+      "phase": "size-sweep",
+      "label": "5MB",
+      "run": 2,
+      "ok": true,
+      "fileBytes": 5242880,
+      "uploadMs": 17787.12,
+      "cid": "QmWmnRKgzRULmsv7ip2JE9kHqQEeTCqMK165dxPnu3Krsw",
+      "url": "https://gateway.pinata.cloud/ipfs/QmWmnRKgzRULmsv7ip2JE9kHqQEeTCqMK165dxPnu3Krsw",
+      "originalSha256": "4db8f09275e3b1f5a4c8992e1756a2825ea355a45ab2e31e824c7c0a7f0a9720",
+      "retrievalAttempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "httpStatus": 200,
+          "durationMs": 6310.08,
+          "error": null
+        }
+      ],
+      "firstAttemptRetrievalOk": true,
+      "retrievalOk": true,
+      "retrievalMs": 6310.08,
+      "retrievedSha256": "4db8f09275e3b1f5a4c8992e1756a2825ea355a45ab2e31e824c7c0a7f0a9720",
+      "integrityOk": true,
+      "unpinOk": true,
+      "error": null
+    },
+    {
+      "phase": "size-sweep",
+      "label": "5MB",
+      "run": 3,
+      "ok": true,
+      "fileBytes": 5242880,
+      "uploadMs": 18879.21,
+      "cid": "QmPfmwMqc8xKoup1C5HYhEXVpKbVfAea1SeDNPe2XUfpfp",
+      "url": "https://gateway.pinata.cloud/ipfs/QmPfmwMqc8xKoup1C5HYhEXVpKbVfAea1SeDNPe2XUfpfp",
+      "originalSha256": "dc266cd173a59c193b82d09d841cc543032a627ab371263d6921f9776565ef9a",
+      "retrievalAttempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "httpStatus": 200,
+          "durationMs": 9517.33,
+          "error": null
+        }
+      ],
+      "firstAttemptRetrievalOk": true,
+      "retrievalOk": true,
+      "retrievalMs": 9517.33,
+      "retrievedSha256": "dc266cd173a59c193b82d09d841cc543032a627ab371263d6921f9776565ef9a",
+      "integrityOk": true,
+      "unpinOk": true,
+      "error": null
+    },
+    {
+      "phase": "size-sweep",
+      "label": "5MB",
+      "run": 4,
+      "ok": true,
+      "fileBytes": 5242880,
+      "uploadMs": 14962.96,
+      "cid": "QmXXxiB3cBAWnf89K5DLuYyot56R7j2r9MBnS2B6p2U7Zg",
+      "url": "https://gateway.pinata.cloud/ipfs/QmXXxiB3cBAWnf89K5DLuYyot56R7j2r9MBnS2B6p2U7Zg",
+      "originalSha256": "1bea50c764b099116c81018971c7763e723b7d8a52eea1e2599f4595e5325f6e",
+      "retrievalAttempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "httpStatus": 200,
+          "durationMs": 8847.3,
+          "error": null
+        }
+      ],
+      "firstAttemptRetrievalOk": true,
+      "retrievalOk": true,
+      "retrievalMs": 8847.3,
+      "retrievedSha256": "1bea50c764b099116c81018971c7763e723b7d8a52eea1e2599f4595e5325f6e",
+      "integrityOk": true,
+      "unpinOk": true,
+      "error": null
+    },
+    {
+      "phase": "size-sweep",
+      "label": "5MB",
+      "run": 5,
+      "ok": true,
+      "fileBytes": 5242880,
+      "uploadMs": 35496.26,
+      "cid": "QmV2ZoXx5thMbAh64SxVP2dyhc66Avahry3kpvfm83gRnY",
+      "url": "https://gateway.pinata.cloud/ipfs/QmV2ZoXx5thMbAh64SxVP2dyhc66Avahry3kpvfm83gRnY",
+      "originalSha256": "c734f59840b69e7dab12e61c870e70976e6d727217e9d95ddc6cee9208ffcd5c",
+      "retrievalAttempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "httpStatus": 200,
+          "durationMs": 9391.82,
+          "error": null
+        }
+      ],
+      "firstAttemptRetrievalOk": true,
+      "retrievalOk": true,
+      "retrievalMs": 9391.82,
+      "retrievedSha256": "c734f59840b69e7dab12e61c870e70976e6d727217e9d95ddc6cee9208ffcd5c",
+      "integrityOk": true,
+      "unpinOk": true,
+      "error": null
+    },
+    {
+      "phase": "size-sweep",
+      "label": "10MB",
+      "run": 1,
+      "ok": true,
+      "fileBytes": 10485760,
+      "uploadMs": 28285.24,
+      "cid": "QmUkkPMtrrkVWNV3NrYL5beaZBj1D8gTFBaBgicxfccN7v",
+      "url": "https://gateway.pinata.cloud/ipfs/QmUkkPMtrrkVWNV3NrYL5beaZBj1D8gTFBaBgicxfccN7v",
+      "originalSha256": "3c6cd349f82c5d9f0fa7195a42b13bfee037240e44121adf42adbc7569538459",
+      "retrievalAttempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "httpStatus": 200,
+          "durationMs": 11009.05,
+          "error": null
+        }
+      ],
+      "firstAttemptRetrievalOk": true,
+      "retrievalOk": true,
+      "retrievalMs": 11009.05,
+      "retrievedSha256": "3c6cd349f82c5d9f0fa7195a42b13bfee037240e44121adf42adbc7569538459",
+      "integrityOk": true,
+      "unpinOk": true,
+      "error": null
+    },
+    {
+      "phase": "size-sweep",
+      "label": "10MB",
+      "run": 2,
+      "ok": true,
+      "fileBytes": 10485760,
+      "uploadMs": 54534.18,
+      "cid": "QmcTg6tmZc7tfQdhYDZxb5dV7paCjQwB3pGCKTvPm4jmw7",
+      "url": "https://gateway.pinata.cloud/ipfs/QmcTg6tmZc7tfQdhYDZxb5dV7paCjQwB3pGCKTvPm4jmw7",
+      "originalSha256": "10e93a3aaec9a0c8f80d7e8d0b61d155a1cb8147d3ad58bb89a29c0c43bb97fe",
+      "retrievalAttempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "httpStatus": 200,
+          "durationMs": 8858.82,
+          "error": null
+        }
+      ],
+      "firstAttemptRetrievalOk": true,
+      "retrievalOk": true,
+      "retrievalMs": 8858.82,
+      "retrievedSha256": "10e93a3aaec9a0c8f80d7e8d0b61d155a1cb8147d3ad58bb89a29c0c43bb97fe",
+      "integrityOk": true,
+      "unpinOk": true,
+      "error": null
+    },
+    {
+      "phase": "size-sweep",
+      "label": "10MB",
+      "run": 3,
+      "ok": true,
+      "fileBytes": 10485760,
+      "uploadMs": 24177.6,
+      "cid": "QmbRMMvBpeqi4DdbFGQk5JjKdn5MCPFvAvby8fdgLaj1pt",
+      "url": "https://gateway.pinata.cloud/ipfs/QmbRMMvBpeqi4DdbFGQk5JjKdn5MCPFvAvby8fdgLaj1pt",
+      "originalSha256": "569a05c461b84a974bb8ee39a6eaaf6a7d05f13656e4b7eec640c1b40ef495be",
+      "retrievalAttempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "httpStatus": 200,
+          "durationMs": 6503.62,
+          "error": null
+        }
+      ],
+      "firstAttemptRetrievalOk": true,
+      "retrievalOk": true,
+      "retrievalMs": 6503.62,
+      "retrievedSha256": "569a05c461b84a974bb8ee39a6eaaf6a7d05f13656e4b7eec640c1b40ef495be",
+      "integrityOk": true,
+      "unpinOk": true,
+      "error": null
+    },
+    {
+      "phase": "size-sweep",
+      "label": "10MB",
+      "run": 4,
+      "ok": true,
+      "fileBytes": 10485760,
+      "uploadMs": 19417.93,
+      "cid": "QmYabz38Q2oxrVq4zYorfj8mr1B3etNkPTRjyxv7kDxquS",
+      "url": "https://gateway.pinata.cloud/ipfs/QmYabz38Q2oxrVq4zYorfj8mr1B3etNkPTRjyxv7kDxquS",
+      "originalSha256": "0f5a10dc647c9ec94ef57b8d24f85a6a6f754f3c7f708541b8e4490993553163",
+      "retrievalAttempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "httpStatus": 200,
+          "durationMs": 10090.87,
+          "error": null
+        }
+      ],
+      "firstAttemptRetrievalOk": true,
+      "retrievalOk": true,
+      "retrievalMs": 10090.87,
+      "retrievedSha256": "0f5a10dc647c9ec94ef57b8d24f85a6a6f754f3c7f708541b8e4490993553163",
+      "integrityOk": true,
+      "unpinOk": true,
+      "error": null
+    },
+    {
+      "phase": "size-sweep",
+      "label": "10MB",
+      "run": 5,
+      "ok": true,
+      "fileBytes": 10485760,
+      "uploadMs": 27612.86,
+      "cid": "QmQeqismLTXW1oVse2fB2s6XKREZcRgUcTE51N7WRFgNBm",
+      "url": "https://gateway.pinata.cloud/ipfs/QmQeqismLTXW1oVse2fB2s6XKREZcRgUcTE51N7WRFgNBm",
+      "originalSha256": "01b9de9b0fb7d39ba6b9ef7667efb2ec3be65aa4e38b1488903745dbd31a117c",
+      "retrievalAttempts": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "httpStatus": 200,
+          "durationMs": 7055.26,
+          "error": null
+        }
+      ],
+      "firstAttemptRetrievalOk": true,
+      "retrievalOk": true,
+      "retrievalMs": 7055.26,
+      "retrievedSha256": "01b9de9b0fb7d39ba6b9ef7667efb2ec3be65aa4e38b1488903745dbd31a117c",
+      "integrityOk": true,
+      "unpinOk": true,
+      "error": null
+    }
+  ],
+  "certificateDelayedRecheck": {
+    "performed": true,
+    "elapsedSinceUploadMs": 652739.15,
+    "retrievalMs": 6535.42,
+    "httpStatus": 200,
+    "retrievedSha256": "3f638479b3e477d1333361b5f8b4ff9f1a93ba852f93ef5425299cde6e69df38",
+    "integrityOk": true,
+    "error": null
+  },
+  "repeatedUploads": {
+    "uploadSameFile1": {
+      "ok": true,
+      "cid": "QmYC4nHdd2P89ieZgcjaN3yVSHfZZNq4oGyZTcTdaFeFtD",
+      "uploadMs": 1493.22,
+      "error": null
+    },
+    "uploadSameFile2": {
+      "ok": true,
+      "cid": "QmYC4nHdd2P89ieZgcjaN3yVSHfZZNq4oGyZTcTdaFeFtD",
+      "uploadMs": 838.77,
+      "error": null
+    },
+    "uploadDifferentFile": {
+      "ok": true,
+      "cid": "Qmd972pxmgMYX6rXrWytn71vZuuPzvbaazFfDCYqsKE45H",
+      "uploadMs": 1088.55,
+      "error": null
+    },
+    "sameFileCidEqual": true,
+    "differentFileCidEqual": false,
+    "unpinResults": [
+      {
+        "cid": "QmYC4nHdd2P89ieZgcjaN3yVSHfZZNq4oGyZTcTdaFeFtD",
+        "ok": true,
+        "httpStatus": 200
+      },
+      {
+        "cid": "QmYC4nHdd2P89ieZgcjaN3yVSHfZZNq4oGyZTcTdaFeFtD",
+        "ok": false,
+        "httpStatus": 400
+      },
+      {
+        "cid": "Qmd972pxmgMYX6rXrWytn71vZuuPzvbaazFfDCYqsKE45H",
+        "ok": true,
+        "httpStatus": 200
+      }
+    ]
+  },
+  "errorProbes": [
+    {
+      "probe": "missing-credential",
+      "expectedFailure": true,
+      "behavedAsExpected": true,
+      "resultSummary": "IPFS upload is not configured on the server. Please contact the administrator.",
+      "secretLeaked": false
+    },
+    {
+      "probe": "invalid-credential",
+      "expectedFailure": true,
+      "behavedAsExpected": true,
+      "resultSummary": "IPFS upload failed. Please try again later.",
+      "secretLeaked": false
+    },
+    {
+      "probe": "malformed-request",
+      "expectedFailure": true,
+      "behavedAsExpected": true,
+      "resultSummary": "Invalid upload request.",
+      "secretLeaked": false
+    },
+    {
+      "probe": "gateway-unknown-cid",
+      "expectedFailure": true,
+      "behavedAsExpected": true,
+      "resultSummary": "httpStatus=400 bodyNonEmpty=true durationMs=6436.77",
+      "secretLeaked": false
+    }
+  ],
+  "stats": {
+    "overall": {
+      "uploadMs": {
+        "n": 36,
+        "min": 1070.15,
+        "max": 54534.18,
+        "mean": 9508.25,
+        "median": 3881.22,
+        "stdDev": 12037.31
+      },
+      "retrievalMs": {
+        "n": 36,
+        "min": 4593.96,
+        "max": 11009.05,
+        "mean": 7181.63,
+        "median": 7045.28,
+        "stdDev": 1687.95
+      }
+    },
+    "bySize": {
+      "10KB": {
+        "uploadMs": {
+          "n": 5,
+          "min": 1070.15,
+          "max": 1259.23,
+          "mean": 1154.14,
+          "median": 1162.64,
+          "stdDev": 73.6
+        },
+        "retrievalMs": {
+          "n": 5,
+          "min": 4932.24,
+          "max": 8002,
+          "mean": 6598.31,
+          "median": 7035.29,
+          "stdDev": 1502.33
+        }
+      },
+      "100KB": {
+        "uploadMs": {
+          "n": 5,
+          "min": 1161.19,
+          "max": 1970.55,
+          "mean": 1400.51,
+          "median": 1305.61,
+          "stdDev": 325.82
+        },
+        "retrievalMs": {
+          "n": 5,
+          "min": 4713.61,
+          "max": 6865.4,
+          "mean": 5445.85,
+          "median": 4917.61,
+          "stdDev": 934.36
+        }
+      },
+      "500KB": {
+        "uploadMs": {
+          "n": 5,
+          "min": 2124.59,
+          "max": 3216.72,
+          "mean": 2540.1,
+          "median": 2347.09,
+          "stdDev": 452.15
+        },
+        "retrievalMs": {
+          "n": 5,
+          "min": 4593.96,
+          "max": 7615.1,
+          "mean": 6211.91,
+          "median": 6360.82,
+          "stdDev": 1307.88
+        }
+      },
+      "1MB": {
+        "uploadMs": {
+          "n": 5,
+          "min": 3048.52,
+          "max": 5214.04,
+          "mean": 4106.02,
+          "median": 4147.48,
+          "stdDev": 828.88
+        },
+        "retrievalMs": {
+          "n": 5,
+          "min": 5674.64,
+          "max": 8858.69,
+          "mean": 7106.93,
+          "median": 6810.77,
+          "stdDev": 1367.21
+        }
+      },
+      "2MB": {
+        "uploadMs": {
+          "n": 5,
+          "min": 5816.96,
+          "max": 9208.48,
+          "mean": 7517.13,
+          "median": 7303.86,
+          "stdDev": 1309.32
+        },
+        "retrievalMs": {
+          "n": 5,
+          "min": 7618.9,
+          "max": 9544.57,
+          "mean": 8354.96,
+          "median": 8306.94,
+          "stdDev": 743.89
+        }
+      },
+      "5MB": {
+        "uploadMs": {
+          "n": 5,
+          "min": 14962.96,
+          "max": 35496.26,
+          "mean": 20527.66,
+          "median": 17787.12,
+          "stdDev": 8520.59
+        },
+        "retrievalMs": {
+          "n": 5,
+          "min": 6272.89,
+          "max": 9517.33,
+          "mean": 8067.88,
+          "median": 8847.3,
+          "stdDev": 1641.12
+        }
+      },
+      "10MB": {
+        "uploadMs": {
+          "n": 5,
+          "min": 19417.93,
+          "max": 54534.18,
+          "mean": 30805.56,
+          "median": 27612.86,
+          "stdDev": 13722.25
+        },
+        "retrievalMs": {
+          "n": 5,
+          "min": 6503.62,
+          "max": 11009.05,
+          "mean": 8703.52,
+          "median": 8858.82,
+          "stdDev": 1924.88
+        }
+      }
+    }
+  },
+  "reliability": {
+    "upload": {
+      "attempted": 39,
+      "succeeded": 39,
+      "failed": 0,
+      "rate": "39/39 (100%)",
+      "note": "attempted = certificate PDF + size-sweep cycles + 3 dedup uploads (all expected-success paths; error probes are excluded because failure is their expected outcome)."
+    },
+    "retrievalFirstAttempt": {
+      "succeeded": 36,
+      "attempted": 36,
+      "rate": "36/36 (100%)"
+    },
+    "retrievalWithRetries": {
+      "succeeded": 36,
+      "attempted": 36,
+      "rate": "36/36 (100%)",
+      "note": "up to 3 attempts per cycle with 2500ms between attempts"
+    },
+    "integrity": {
+      "byteIdentical": 36,
+      "checked": 36,
+      "rate": "36/36 (100%)",
+      "note": "checked = successful uploads whose retrieval returned bytes; byteIdentical = SHA-256(original) === SHA-256(retrieved)."
+    },
+    "delayedCertificateRecheck": {
+      "performed": true,
+      "integrityOk": true
+    },
+    "dedup": {
+      "sameFileCidEqual": true,
+      "differentFileCidEqual": false
+    },
+    "errorProbesBehavedAsExpected": "4/4",
+    "unpinCleanup": {
+      "attempted": 39,
+      "succeeded": 37,
+      "note": "certificate-PDF and remaining-queue unpin outcomes are printed to the console; size-sweep and dedup unpin outcomes are stored per record."
+    }
+  }
+}
